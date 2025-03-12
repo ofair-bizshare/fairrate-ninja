@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Star, Facebook, Instagram } from 'lucide-react';
 import RatingSystem from '@/components/RatingSystem';
@@ -12,56 +13,20 @@ const Index = () => {
   const [weightedAverage, setWeightedAverage] = useState<number>(0);
   const [showSubmitSuccess, setShowSubmitSuccess] = useState(false);
   const [profName, setProfName] = useState('');
-  const [category, setCategory] = useState('');
   const { toast } = useToast();
-  const benefitsSectionRef = useRef<HTMLDivElement>(null);
+  const promotionSectionRef = useRef<HTMLDivElement>(null);
 
-  const handleRatingChange = (newRatings: { [key: string]: number }, average: number) => {
+  const handleRatingChange = (newRatings: { [key: string]: number }, average: number, ratedProfName: string) => {
     setRatings(newRatings);
     setWeightedAverage(average);
-  };
-
-  const handleSubmitRating = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (weightedAverage === 0) {
-      toast({
-        title: "לא ניתן לשלוח",
-        description: "נא לדרג לפחות קריטריון אחד",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    if (!profName.trim()) {
-      toast({
-        title: "חסרים פרטים",
-        description: "נא להזין את שם בעל המקצוע",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Here you would normally send the data to a server
-    setShowSubmitSuccess(true);
-    
-    toast({
-      title: "תודה על הדירוג!",
-      description: "הדירוג נשלח בהצלחה",
-    });
-    
-    // Reset after 5 seconds
-    setTimeout(() => {
-      setShowSubmitSuccess(false);
-      setProfName('');
-      setCategory('');
-      // Reset ratings
-      setRatings({});
-      setWeightedAverage(0);
-    }, 5000);
+    setProfName(ratedProfName);
   };
 
   const scrollToPromotion = () => {
+    document.getElementById('promotion-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToBenefits = () => {
     document.getElementById('benefits-section')?.scrollIntoView({ behavior: 'smooth' });
   };
 
@@ -108,7 +73,7 @@ const Index = () => {
               <button 
                 className="inline-flex items-center justify-center rounded-xl px-8 py-3 text-base font-medium 
                         transition-all duration-300 bg-secondary/80 text-secondary-foreground hover:bg-secondary"
-                onClick={scrollToPromotion}
+                onClick={scrollToBenefits}
               >
                 מה זה oFair
               </button>
@@ -130,7 +95,7 @@ const Index = () => {
       </div>
 
       {/* Promotion Banner */}
-      <section id="promotion-section">
+      <section id="promotion-section" ref={promotionSectionRef}>
         <PromotionBanner />
       </section>
 
@@ -142,11 +107,13 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center mb-12">
             <div className="mb-6 md:mb-0">
-              <img 
-                src="/lovable-uploads/00f51801-ae0f-45ec-bf78-c1903df9abee.png" 
-                alt="oFair Logo" 
-                className="h-24 w-24 object-contain rounded-full border-4 border-primary"
-              />
+              <div className="rounded-full border-4 border-primary p-2">
+                <img 
+                  src="/lovable-uploads/00f51801-ae0f-45ec-bf78-c1903df9abee.png" 
+                  alt="oFair Logo" 
+                  className="h-24 w-24 object-contain rounded-full"
+                />
+              </div>
             </div>
             
             <div className="flex gap-16">

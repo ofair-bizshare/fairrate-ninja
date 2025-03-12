@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Gift, Check, Facebook, Instagram, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -8,26 +9,82 @@ const PromotionBanner: React.FC = () => {
   const [phone, setPhone] = useState('');
   const [isChecked, setIsChecked] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errors, setErrors] = useState<{
+    email?: string;
+    phone?: string;
+    fullName?: string;
+  }>({});
   const { toast } = useToast();
+
+  const validateIsraeliPhone = (phoneNumber: string) => {
+    // Israeli phone numbers: 10 digits, typically starting with 05
+    const israeliPhonePattern = /^0\d{9}$/;
+    return israeliPhonePattern.test(phoneNumber);
+  };
+
+  const validateEmail = (email: string) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !fullName || !phone || !isChecked) {
+    // Reset errors
+    const newErrors: {
+      email?: string;
+      phone?: string;
+      fullName?: string;
+    } = {};
+    
+    // Validate form fields
+    if (!fullName.trim()) {
+      newErrors.fullName = "נא להזין שם מלא";
+    }
+    
+    if (!phone) {
+      newErrors.phone = "נא להזין מספר טלפון";
+    } else if (!validateIsraeliPhone(phone)) {
+      newErrors.phone = "מספר טלפון ישראלי חייב להיות 10 ספרות ולהתחיל ב-0";
+    }
+    
+    if (!email) {
+      newErrors.email = "נא להזין כתובת מייל";
+    } else if (!validateEmail(email)) {
+      newErrors.email = "כתובת מייל לא תקינה";
+    }
+    
+    // Check if any errors exist
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      
+      // Display toast with first error
+      const firstError = Object.values(newErrors)[0];
       toast({
         title: "שגיאה",
-        description: "נא למלא את כל השדות",
+        description: firstError,
         variant: "destructive",
       });
+      
       return;
     }
     
+    // No errors, proceed with submission
     toast({
       title: "תודה!",
       description: "נשלח לך מייל כשהמערכת תהיה זמינה",
     });
     
     setIsSubmitted(true);
+  };
+
+  const resetForm = () => {
+    setIsSubmitted(false);
+    setFullName('');
+    setPhone('');
+    setEmail('');
+    setIsChecked(false);
+    setErrors({});
   };
 
   return (
@@ -58,17 +115,22 @@ const PromotionBanner: React.FC = () => {
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="שם מלא"
-                    className="w-full px-4 py-3 rounded-xl border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary rtl mb-3"
+                    placeholder="שם מלא*"
+                    className={`w-full px-4 py-3 rounded-xl border ${errors.fullName ? 'border-red-500' : 'border-input'} bg-background focus:outline-none focus:ring-2 focus:ring-primary rtl mb-3`}
                     required
                   />
                   
                   <input
                     type="tel"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="מספר טלפון"
-                    className="w-full px-4 py-3 rounded-xl border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary rtl mb-3"
+                    onChange={(e) => {
+                      // Allow only digits
+                      const value = e.target.value.replace(/\D/g, '');
+                      setPhone(value);
+                    }}
+                    placeholder="מספר טלפון* (10 ספרות)"
+                    maxLength={10}
+                    className={`w-full px-4 py-3 rounded-xl border ${errors.phone ? 'border-red-500' : 'border-input'} bg-background focus:outline-none focus:ring-2 focus:ring-primary rtl mb-3`}
                     required
                   />
                   
@@ -76,8 +138,8 @@ const PromotionBanner: React.FC = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="כתובת מייל"
-                    className="w-full px-4 py-3 rounded-xl border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary rtl"
+                    placeholder="כתובת מייל*"
+                    className={`w-full px-4 py-3 rounded-xl border ${errors.email ? 'border-red-500' : 'border-input'} bg-background focus:outline-none focus:ring-2 focus:ring-primary rtl`}
                     required
                   />
                 </div>
@@ -105,8 +167,9 @@ const PromotionBanner: React.FC = () => {
             ) : (
               <div className="text-center py-4 relative">
                 <button
-                  onClick={() => setIsSubmitted(false)}
+                  onClick={resetForm}
                   className="absolute top-0 right-0 p-2 text-gray-500 hover:text-gray-700"
+                  type="button"
                 >
                   <X className="h-5 w-5" />
                 </button>

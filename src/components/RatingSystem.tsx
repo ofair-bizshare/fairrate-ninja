@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 interface RatingCriteria {
   id: string;
@@ -12,7 +13,7 @@ interface RatingCriteria {
 }
 
 interface RatingSystemProps {
-  onRatingChange: (ratings: { [key: string]: number }, weightedAverage: number) => void;
+  onRatingChange: (ratings: { [key: string]: number }, weightedAverage: number, profName: string) => void;
 }
 
 const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
@@ -25,9 +26,10 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
     cleanliness: 0,
     recommendation: 0,
   });
-
+  const [profName, setProfName] = useState('');
   const [hoveredRatings, setHoveredRatings] = useState<{ [key: string]: number }>({});
   const [weightedAverage, setWeightedAverage] = useState(0);
+  const { toast } = useToast();
 
   const criteria: RatingCriteria[] = [
     { id: 'overall', label: 'דירוג כולל', value: ratings.overall, icon: '⭐', weight: 1.5 },
@@ -74,8 +76,25 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
   };
 
   const handleSubmit = () => {
-    if (weightedAverage === 0) return;
-    onRatingChange(ratings, weightedAverage);
+    if (weightedAverage === 0) {
+      toast({
+        title: "לא ניתן לשלוח",
+        description: "נא לדרג לפחות קריטריון אחד",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!profName.trim()) {
+      toast({
+        title: "חסרים פרטים",
+        description: "נא להזין את שם בעל המקצוע",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    onRatingChange(ratings, weightedAverage, profName);
   };
 
   const renderStars = (criterionId: string, value: number) => {
@@ -97,8 +116,9 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
             )}
             onClick={() => handleRatingChange(criterionId, num)}
             onMouseEnter={() => handleStarHover(criterionId, num)}
+            type="button"
           >
-            {criterionId === 'overall' ? num : num}
+            {num}
           </button>
         ))}
       </div>
@@ -108,6 +128,19 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
   return (
     <div className="w-full max-w-2xl mx-auto ofair-card">
       <h2 className="text-2xl font-bold text-center mb-6 rtl">דרגו את בעל המקצוע</h2>
+      
+      <div className="mb-6">
+        <label htmlFor="profName" className="block text-sm font-medium text-gray-700 mb-1 rtl">שם בעל המקצוע*</label>
+        <input
+          type="text"
+          id="profName"
+          value={profName}
+          onChange={(e) => setProfName(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl"
+          placeholder="הזינו את שם בעל המקצוע"
+          required
+        />
+      </div>
       
       <div className="space-y-6">
         {criteria.map((criterion) => (
@@ -119,7 +152,7 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
             )}
           >
             <div className="flex items-center gap-2">
-              <div className="ofair-chip">{criterion.id === "overall" ? "1" : ""}</div>
+              <div className="ofair-chip">{criterion.icon}</div>
               <span className="font-medium">{criterion.label}</span>
             </div>
             <div className="flex-shrink-0">
@@ -134,9 +167,9 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
           type="button"
           className={cn(
             "ofair-button px-8",
-            weightedAverage === 0 && "opacity-70 cursor-not-allowed"
+            weightedAverage === 0 || !profName.trim() ? "opacity-70 cursor-not-allowed" : ""
           )}
-          disabled={weightedAverage === 0}
+          disabled={weightedAverage === 0 || !profName.trim()}
           onClick={handleSubmit}
         >
           שלחו את הדירוג
