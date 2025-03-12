@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Gift, Check, Facebook, Instagram } from 'lucide-react';
+import { Gift, Check, Facebook, Instagram, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const PromotionBanner: React.FC = () => {
@@ -23,7 +22,6 @@ const PromotionBanner: React.FC = () => {
       return;
     }
     
-    // Here you would normally send the data to a server
     toast({
       title: "תודה!",
       description: "נשלח לך מייל כשהמערכת תהיה זמינה",
@@ -36,7 +34,6 @@ const PromotionBanner: React.FC = () => {
     <div className="w-full py-12 bg-gradient-to-t from-blue-50/50 to-background">
       <div className="container mx-auto px-4">
         <div className="ofair-card max-w-3xl mx-auto relative overflow-hidden">
-          {/* Decorative elements */}
           <div className="absolute top-0 left-0 h-20 w-20 bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
           <div className="absolute bottom-0 right-0 h-32 w-32 bg-primary/5 rounded-full translate-x-1/3 translate-y-1/3"></div>
           
@@ -106,7 +103,14 @@ const PromotionBanner: React.FC = () => {
                 </button>
               </form>
             ) : (
-              <div className="text-center py-4">
+              <div className="text-center py-4 relative">
+                <button
+                  onClick={() => setIsSubmitted(false)}
+                  className="absolute top-0 right-0 p-2 text-gray-500 hover:text-gray-700"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+                
                 <div className="inline-flex items-center justify-center bg-green-100 text-green-700 p-4 rounded-full mb-4">
                   <Check className="h-8 w-8" />
                 </div>

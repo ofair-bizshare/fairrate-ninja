@@ -135,6 +135,20 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
         ))}
       </div>
 
+      <div className="mt-8 text-center">
+        <button 
+          type="button"
+          className={cn(
+            "ofair-button px-8",
+            weightedAverage === 0 && "opacity-70 cursor-not-allowed"
+          )}
+          disabled={weightedAverage === 0}
+          onClick={() => onRatingChange(ratings, weightedAverage)}
+        >
+          שלחו את הדירוג
+        </button>
+      </div>
+
       <div className="mt-8 pt-6 border-t border-gray-100">
         <div className="flex flex-col items-center justify-center gap-2">
           <h3 className="text-lg font-semibold text-center rtl">ציון משוקלל סופי</h3>

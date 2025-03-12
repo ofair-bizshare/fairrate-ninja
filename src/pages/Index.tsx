@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect, useRef } from 'react';
-import { Star, ChevronRight, ChevronDown, Facebook, Instagram } from 'lucide-react';
+import { Star, Facebook, Instagram } from 'lucide-react';
 import RatingSystem from '@/components/RatingSystem';
 import PlatformBenefits from '@/components/PlatformBenefits';
 import Testimonials from '@/components/Testimonials';
-import LiveStats from '@/components/LiveStats';
 import PromotionBanner from '@/components/PromotionBanner';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -67,6 +65,10 @@ const Index = () => {
     benefitsSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const scrollToPromotion = () => {
+    document.getElementById('promotion-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div dir="rtl" className="min-h-screen flex flex-col bg-background">
       {/* Hero Section */}
@@ -80,19 +82,22 @@ const Index = () => {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center animate-fade-in">
-            <div className="flex justify-center mb-6">
-              <img 
-                src="/lovable-uploads/00f51801-ae0f-45ec-bf78-c1903df9abee.png" 
-                alt="oFair Logo" 
-                className="h-36 object-contain"
-              />
+            <div className="flex justify-center mb-8">
+              <div className="rounded-full border-4 border-primary/30 p-4">
+                <img 
+                  src="/lovable-uploads/00f51801-ae0f-45ec-bf78-c1903df9abee.png" 
+                  alt="oFair Logo" 
+                  className="h-32 object-contain"
+                />
+              </div>
             </div>
             
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 max-w-4xl mx-auto leading-tight">
-              דרגו את בעל המקצוע שלכם ועזרו ללקוחות הבאים לקבל שירות טוב יותר!
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 max-w-4xl mx-auto leading-tight">
+              דרגו את בעל המקצוע שלכם ועזרו לו להכנס לפלטפורמת מציאת אנשי המקצוע החדשנית של ישראל
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               בעזרת הדירוגים שלכם, אנחנו יוצרים קהילה של בעלי מקצוע אמינים ומדויקים יותר.
+              עופר היא פלטפורמה שנועדה לעזור לצרכנים לקבל אנשי מקצוע איכותיים להשוות מחירים ולקבל זמינות באופן מהיר ונוח.
             </p>
             
             <div className="flex flex-col md:flex-row justify-center gap-4 mb-12">
@@ -105,19 +110,14 @@ const Index = () => {
                 דרגו עכשיו
               </button>
               <button 
-                className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-base font-medium 
-                        transition-all duration-300 bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                onClick={scrollToBenefits}
+                className="inline-flex items-center justify-center rounded-xl px-8 py-3 text-base font-medium 
+                        transition-all duration-300 bg-secondary/80 text-secondary-foreground hover:bg-secondary"
+                onClick={scrollToPromotion}
               >
                 מה זה oFair
-                <ChevronDown className="mr-2 h-4 w-4" />
               </button>
             </div>
           </div>
-        </div>
-        
-        <div className="absolute bottom-0 left-0 right-0 flex justify-center">
-          <ChevronDown className="h-8 w-8 text-primary/50 animate-bounce" />
         </div>
       </header>
 
@@ -251,9 +251,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Live Stats Section */}
-      <LiveStats />
-
       {/* Platform Benefits Section */}
       <div ref={benefitsSectionRef}>
         <PlatformBenefits />
@@ -263,21 +260,23 @@ const Index = () => {
       <Testimonials />
 
       {/* Promotion Banner */}
-      <PromotionBanner />
+      <section id="promotion-section">
+        <PromotionBanner />
+      </section>
 
       {/* Footer */}
       <footer className="bg-white py-12 border-t border-gray-100">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-8">
             <div className="mb-6 md:mb-0">
               <img 
                 src="/lovable-uploads/00f51801-ae0f-45ec-bf78-c1903df9abee.png" 
                 alt="oFair Logo" 
-                className="h-12 object-contain"
+                className="h-16 object-contain"
               />
             </div>
             
-            <div className="flex space-x-6">
+            <div className="flex gap-12">
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
                 תנאי שימוש
               </a>
