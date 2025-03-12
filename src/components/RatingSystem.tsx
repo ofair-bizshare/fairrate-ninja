@@ -28,7 +28,6 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
 
   const [hoveredRatings, setHoveredRatings] = useState<{ [key: string]: number }>({});
   const [weightedAverage, setWeightedAverage] = useState(0);
-  const [animateStars, setAnimateStars] = useState(false);
 
   const criteria: RatingCriteria[] = [
     { id: 'overall', label: 'דירוג כולל', value: ratings.overall, icon: '⭐', weight: 1.5 },
@@ -41,12 +40,6 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
   ];
 
   useEffect(() => {
-    setAnimateStars(true);
-    const timer = setTimeout(() => setAnimateStars(false), 700);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
     // Calculate weighted average
     const totalWeight = criteria.reduce((sum, criterion) => sum + criterion.weight, 0);
     const weightedSum = criteria.reduce(
@@ -56,10 +49,7 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
     
     const average = totalWeight > 0 ? weightedSum / totalWeight : 0;
     setWeightedAverage(Number(average.toFixed(1)));
-    
-    // Notify parent component
-    onRatingChange(ratings, Number(average.toFixed(1)));
-  }, [ratings, criteria, onRatingChange]);
+  }, [ratings, criteria]);
 
   const handleRatingChange = (criterionId: string, value: number) => {
     setRatings(prev => ({
@@ -83,10 +73,14 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
     });
   };
 
+  const handleSubmit = () => {
+    if (weightedAverage === 0) return;
+    onRatingChange(ratings, weightedAverage);
+  };
+
   const renderStars = (criterionId: string, value: number) => {
     const displayValue = hoveredRatings[criterionId] !== undefined ? hoveredRatings[criterionId] : value;
     
-    // Numeric rating style (0-5) as in the image
     return (
       <div 
         className="flex rtl gap-2"
@@ -96,15 +90,15 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
           <button
             key={`${criterionId}-${num}`}
             className={cn(
-              "w-10 h-10 rounded-md flex items-center justify-center border",
-              displayValue === num 
+              "w-10 h-10 rounded-md flex items-center justify-center border transition-all",
+              (displayValue === num || ratings[criterionId] === num)
                 ? "bg-blue-500 text-white border-blue-500" 
                 : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
             )}
             onClick={() => handleRatingChange(criterionId, num)}
             onMouseEnter={() => handleStarHover(criterionId, num)}
           >
-            {num}
+            {criterionId === 'overall' ? num : num}
           </button>
         ))}
       </div>
@@ -143,7 +137,7 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
             weightedAverage === 0 && "opacity-70 cursor-not-allowed"
           )}
           disabled={weightedAverage === 0}
-          onClick={() => onRatingChange(ratings, weightedAverage)}
+          onClick={handleSubmit}
         >
           שלחו את הדירוג
         </button>
