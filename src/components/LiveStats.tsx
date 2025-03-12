@@ -15,53 +15,32 @@ const LiveStats: React.FC = () => {
   const [stats, setStats] = useState<Stat[]>([
     {
       icon: <Users className="h-5 w-5 text-primary" />,
-      value: 3750,
+      value: 0,
       label: "לקוחות רשומים",
-      increment: 1,
+      increment: 0,
       format: (v: number) => v.toLocaleString()
     },
     {
       icon: <Star className="h-5 w-5 text-yellow-400" />,
-      value: 8421,
+      value: 0,
       label: "דירוגים שהושארו",
-      increment: 1,
+      increment: 0,
       format: (v: number) => v.toLocaleString()
     },
     {
       icon: <BadgeCheck className="h-5 w-5 text-primary" />,
-      value: 1425,
+      value: 0,
       label: "בעלי מקצוע מאומתים",
-      increment: 1,
+      increment: 0,
       format: (v: number) => v.toLocaleString()
     },
     {
       icon: <Clock className="h-5 w-5 text-primary" />,
-      value: 87,
+      value: 0,
       label: "דקות זמן תגובה ממוצע",
       format: (v: number) => `${v}%`
     }
   ]);
-
-  useEffect(() => {
-    const intervalIds = stats.map((stat, index) => {
-      if (!stat.increment) return null;
-      
-      return setInterval(() => {
-        setStats(currentStats => {
-          const newStats = [...currentStats];
-          newStats[index] = {
-            ...newStats[index],
-            value: newStats[index].value + 1
-          };
-          return newStats;
-        });
-      }, 3000 + index * 1000);
-    });
-
-    return () => {
-      intervalIds.forEach(id => id && clearInterval(id));
-    };
-  }, []);
 
   return (
     <div className="w-full py-12">
@@ -80,12 +59,7 @@ const LiveStats: React.FC = () => {
               <div className="bg-primary/5 p-3 rounded-full mb-3 inline-flex">
                 {stat.icon}
               </div>
-              <div 
-                className={cn(
-                  "text-2xl md:text-3xl font-bold mb-1",
-                  stat.increment && "animate-pulse-subtle"
-                )}
-              >
+              <div className="text-2xl md:text-3xl font-bold mb-1">
                 {stat.format ? stat.format(stat.value) : stat.value}
               </div>
               <div className="text-sm text-muted-foreground rtl">{stat.label}</div>

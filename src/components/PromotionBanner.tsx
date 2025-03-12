@@ -1,10 +1,12 @@
 
 import React, { useState } from 'react';
-import { Gift, Check } from 'lucide-react';
+import { Gift, Check, Facebook, Instagram } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const PromotionBanner: React.FC = () => {
   const [email, setEmail] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
   const [isChecked, setIsChecked] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
@@ -12,7 +14,7 @@ const PromotionBanner: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !isChecked) {
+    if (!email || !fullName || !phone || !isChecked) {
       toast({
         title: "שגיאה",
         description: "נא למלא את כל השדות",
@@ -56,10 +58,28 @@ const PromotionBanner: React.FC = () => {
               <form onSubmit={handleSubmit} className="max-w-md mx-auto">
                 <div className="mb-4">
                   <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="שם מלא"
+                    className="w-full px-4 py-3 rounded-xl border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary rtl mb-3"
+                    required
+                  />
+                  
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="מספר טלפון"
+                    className="w-full px-4 py-3 rounded-xl border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary rtl mb-3"
+                    required
+                  />
+                  
+                  <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="הזינו את כתובת המייל שלכם"
+                    placeholder="כתובת מייל"
                     className="w-full px-4 py-3 rounded-xl border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary rtl"
                     required
                   />
@@ -91,7 +111,29 @@ const PromotionBanner: React.FC = () => {
                   <Check className="h-8 w-8" />
                 </div>
                 <h3 className="text-xl font-bold mb-2 rtl">נרשמת בהצלחה!</h3>
-                <p className="text-muted-foreground rtl">נעדכן אותך ברגע שהמערכת תהיה זמינה</p>
+                <p className="text-muted-foreground rtl mb-6">נעדכן אותך ברגע שהמערכת תהיה זמינה</p>
+                
+                <div className="mt-4">
+                  <p className="text-muted-foreground rtl font-medium mb-3">עקבו אחרינו ברשתות החברתיות:</p>
+                  <div className="flex justify-center gap-4">
+                    <a 
+                      href="https://www.facebook.com/profile.php?id=61573771175534#" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors"
+                    >
+                      <Facebook className="h-6 w-6" />
+                    </a>
+                    <a 
+                      href="https://www.instagram.com/ofair_il?fbclid=IwZXh0bgNhZW0CMTAAAR1Hdq28l9YzB4sHU41YXjS5UYVD_LihmktdeE0cqacfrxkIm1ryJ6_Y3qQ_aem_uZmC0wj1Asq9SbLb9ZLcWg" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center bg-gradient-to-tr from-purple-600 via-pink-500 to-orange-400 text-white p-2 rounded-full hover:opacity-90 transition-opacity"
+                    >
+                      <Instagram className="h-6 w-6" />
+                    </a>
+                  </div>
+                </div>
               </div>
             )}
           </div>

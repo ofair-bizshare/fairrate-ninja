@@ -84,37 +84,29 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
   };
 
   const renderStars = (criterionId: string, value: number) => {
-    const starCount = 5;
     const displayValue = hoveredRatings[criterionId] !== undefined ? hoveredRatings[criterionId] : value;
     
+    // Numeric rating style (0-5) as in the image
     return (
       <div 
-        className="star-rating-wrapper rtl"
+        className="flex rtl gap-2"
         onMouseLeave={() => handleStarLeave(criterionId)}
       >
-        <div className="star-rating-backdrop">
-          {[...Array(starCount)].map((_, index) => (
-            <Star 
-              key={`${criterionId}-backdrop-${index}`}
-              size={28}
-              className="text-gray-200"
-            />
-          ))}
-        </div>
-        <div className="star-rating" style={{ width: `${(displayValue / starCount) * 100}%` }}>
-          {[...Array(starCount)].map((_, index) => (
-            <Star 
-              key={`${criterionId}-filled-${index}`}
-              size={28}
-              className={cn(
-                "text-yellow-400 cursor-pointer transition-all",
-                animateStars && "animate-pulse-subtle"
-              )}
-              onClick={() => handleRatingChange(criterionId, index + 1)}
-              onMouseEnter={() => handleStarHover(criterionId, index + 1)}
-            />
-          ))}
-        </div>
+        {[0, 1, 2, 3, 4, 5].map((num) => (
+          <button
+            key={`${criterionId}-${num}`}
+            className={cn(
+              "w-10 h-10 rounded-md flex items-center justify-center border",
+              displayValue === num 
+                ? "bg-blue-500 text-white border-blue-500" 
+                : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
+            )}
+            onClick={() => handleRatingChange(criterionId, num)}
+            onMouseEnter={() => handleStarHover(criterionId, num)}
+          >
+            {num}
+          </button>
+        ))}
       </div>
     );
   };

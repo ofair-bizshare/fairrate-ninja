@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Star, ChevronRight, ChevronDown } from 'lucide-react';
+import { Star, ChevronRight, ChevronDown, Facebook, Instagram } from 'lucide-react';
 import RatingSystem from '@/components/RatingSystem';
 import PlatformBenefits from '@/components/PlatformBenefits';
 import Testimonials from '@/components/Testimonials';
@@ -80,8 +80,15 @@ const Index = () => {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center animate-fade-in">
-            <div className="ofair-chip mb-4">oFair</div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 max-w-4xl mx-auto leading-tight">
+            <div className="flex justify-center mb-6">
+              <img 
+                src="/lovable-uploads/00f51801-ae0f-45ec-bf78-c1903df9abee.png" 
+                alt="oFair Logo" 
+                className="h-36 object-contain"
+              />
+            </div>
+            
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 max-w-4xl mx-auto leading-tight">
               דרגו את בעל המקצוע שלכם ועזרו ללקוחות הבאים לקבל שירות טוב יותר!
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
@@ -102,27 +109,9 @@ const Index = () => {
                         transition-all duration-300 bg-secondary text-secondary-foreground hover:bg-secondary/80"
                 onClick={scrollToBenefits}
               >
-                קראו עוד
+                מה זה oFair
                 <ChevronDown className="mr-2 h-4 w-4" />
               </button>
-            </div>
-
-            <div className="flex items-center justify-center flex-wrap gap-6">
-              <div className="flex items-center gap-1 bg-white/50 px-4 py-2 rounded-full">
-                <span className="text-lg font-bold">4.8</span>
-                <Star className="h-5 w-5 text-yellow-400" fill="#facc15" />
-                <span className="text-sm text-muted-foreground mr-1">דירוג ממוצע</span>
-              </div>
-              
-              <div className="flex items-center gap-1 bg-white/50 px-4 py-2 rounded-full">
-                <span className="text-lg font-bold">8,400+</span>
-                <span className="text-sm text-muted-foreground mr-1">דירוגים</span>
-              </div>
-              
-              <div className="flex items-center gap-1 bg-white/50 px-4 py-2 rounded-full">
-                <span className="text-lg font-bold">1,400+</span>
-                <span className="text-sm text-muted-foreground mr-1">בעלי מקצוע</span>
-              </div>
             </div>
           </div>
         </div>
@@ -228,6 +217,29 @@ const Index = () => {
               <p className="text-lg mb-6">
                 הדירוג שלכם ל{profName} התקבל בהצלחה ויעזור ללקוחות אחרים לקבל החלטות טובות יותר.
               </p>
+              
+              <div className="mt-4 mb-6">
+                <p className="text-muted-foreground font-medium mb-3">עקבו אחרינו ברשתות החברתיות:</p>
+                <div className="flex justify-center gap-4">
+                  <a 
+                    href="https://www.facebook.com/profile.php?id=61573771175534#" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors"
+                  >
+                    <Facebook className="h-6 w-6" />
+                  </a>
+                  <a 
+                    href="https://www.instagram.com/ofair_il?fbclid=IwZXh0bgNhZW0CMTAAAR1Hdq28l9YzB4sHU41YXjS5UYVD_LihmktdeE0cqacfrxkIm1ryJ6_Y3qQ_aem_uZmC0wj1Asq9SbLb9ZLcWg" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center bg-gradient-to-tr from-purple-600 via-pink-500 to-orange-400 text-white p-2 rounded-full hover:opacity-90 transition-opacity"
+                  >
+                    <Instagram className="h-6 w-6" />
+                  </a>
+                </div>
+              </div>
+              
               <button 
                 className="ofair-button"
                 onClick={scrollToBenefits}
@@ -258,8 +270,11 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
-              <h2 className="text-2xl font-bold text-primary">oFair</h2>
-              <p className="text-muted-foreground">מצאו את בעלי המקצוע הטובים ביותר</p>
+              <img 
+                src="/lovable-uploads/00f51801-ae0f-45ec-bf78-c1903df9abee.png" 
+                alt="oFair Logo" 
+                className="h-12 object-contain"
+              />
             </div>
             
             <div className="flex space-x-6">
@@ -276,6 +291,25 @@ const Index = () => {
           </div>
           
           <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+            <div className="flex justify-center gap-4 mb-4">
+              <a 
+                href="https://www.facebook.com/profile.php?id=61573771175534#" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors"
+              >
+                <Facebook className="h-5 w-5" />
+              </a>
+              <a 
+                href="https://www.instagram.com/ofair_il?fbclid=IwZXh0bgNhZW0CMTAAAR1Hdq28l9YzB4sHU41YXjS5UYVD_LihmktdeE0cqacfrxkIm1ryJ6_Y3qQ_aem_uZmC0wj1Asq9SbLb9ZLcWg" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center bg-gradient-to-tr from-purple-600 via-pink-500 to-orange-400 text-white p-2 rounded-full hover:opacity-90 transition-opacity"
+              >
+                <Instagram className="h-5 w-5" />
+              </a>
+            </div>
+            
             <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} oFair. כל הזכויות שמורות.
             </p>
