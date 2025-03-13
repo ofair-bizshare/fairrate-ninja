@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Star } from 'lucide-react';
+import { Star, X, Facebook, Instagram } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
@@ -29,6 +29,7 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
   const [profName, setProfName] = useState('');
   const [hoveredRatings, setHoveredRatings] = useState<{ [key: string]: number }>({});
   const [weightedAverage, setWeightedAverage] = useState(0);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const { toast } = useToast();
 
   const criteria: RatingCriteria[] = [
@@ -75,6 +76,20 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
     });
   };
 
+  const resetForm = () => {
+    setRatings({
+      overall: 0,
+      timing: 0,
+      quality: 0,
+      value: 0,
+      communication: 0,
+      cleanliness: 0,
+      recommendation: 0,
+    });
+    setProfName('');
+    setWeightedAverage(0);
+  };
+
   const handleSubmit = () => {
     if (weightedAverage === 0) {
       toast({
@@ -97,11 +112,24 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
     // This is the function that actually submits the rating - make sure it's called
     onRatingChange(ratings, weightedAverage, profName);
     
+    // Show success popup
+    setShowSuccessPopup(true);
+    
     // Show toast for confirmation
     toast({
       title: "הדירוג נשלח בהצלחה!",
       description: `תודה על הדירוג של ${profName}`,
     });
+  };
+
+  const closePopup = () => {
+    setShowSuccessPopup(false);
+    resetForm();
+  };
+
+  const scrollToBenefits = () => {
+    document.getElementById('benefits-section')?.scrollIntoView({ behavior: 'smooth' });
+    closePopup();
   };
 
   const renderStars = (criterionId: string, value: number) => {
@@ -197,6 +225,61 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
           </div>
         </div>
       </div>
+
+      {/* Success Popup */}
+      {showSuccessPopup && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 relative">
+            <button 
+              onClick={closePopup}
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            
+            <div className="text-center mb-6">
+              <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <Star className="h-8 w-8 text-green-500" />
+              </div>
+              <h3 className="text-xl font-bold rtl">תודה על הדירוג!</h3>
+              <p className="text-muted-foreground mt-2 rtl">
+                הדירוג שלך יעזור לאחרים למצוא בעלי מקצוע איכותיים
+              </p>
+            </div>
+            
+            <div className="mb-6">
+              <h4 className="font-medium text-center mb-3 rtl">עקבו אחרינו ברשתות החברתיות</h4>
+              <div className="flex justify-center gap-4">
+                <a 
+                  href="https://www.facebook.com/profile.php?id=61573771175534#" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors"
+                >
+                  <Facebook className="h-5 w-5" />
+                </a>
+                <a 
+                  href="https://www.instagram.com/ofair_il?fbclid=IwZXh0bgNhZW0CMTAAAR1Hdq28l9YzB4sHU41YXjS5UYVD_LihmktdeE0cqacfrxkIm1ryJ6_Y3qQ_aem_uZmC0wj1Asq9SbLb9ZLcWg" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-gradient-to-tr from-purple-600 via-pink-500 to-orange-400 text-white p-2 rounded-full hover:opacity-90 transition-opacity"
+                >
+                  <Instagram className="h-5 w-5" />
+                </a>
+              </div>
+            </div>
+            
+            <div className="text-center">
+              <button
+                onClick={scrollToBenefits}
+                className="ofair-button bg-secondary/80 text-secondary-foreground hover:bg-secondary"
+              >
+                מה זה oFair?
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

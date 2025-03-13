@@ -55,7 +55,7 @@ const Index = () => {
                 <img 
                   src="/lovable-uploads/00f51801-ae0f-45ec-bf78-c1903df9abee.png" 
                   alt="oFair Logo" 
-                  className="h-32 w-32 object-contain rounded-full"
+                  className="h-40 w-40 object-contain rounded-full"
                 />
               </div>
             </div>
