@@ -128,7 +128,7 @@ const PromotionBanner: React.FC = () => {
                       const value = e.target.value.replace(/\D/g, '');
                       setPhone(value);
                     }}
-                    placeholder="מספר טלפון* (10 ספרות)"
+                    placeholder="מספר טלפון*"
                     maxLength={10}
                     className={`w-full px-4 py-3 rounded-xl border ${errors.phone ? 'border-red-500' : 'border-input'} bg-background focus:outline-none focus:ring-2 focus:ring-primary rtl mb-3`}
                     required
@@ -163,6 +163,10 @@ const PromotionBanner: React.FC = () => {
                 >
                   שמרו לי את ההטבה!
                 </button>
+                
+                <p className="text-xs text-muted-foreground mt-3 rtl text-center">
+                  * 5% חזרה לעבודה הבאה שלכם דרכנו ישמרו בחשבונכם
+                </p>
               </form>
             ) : (
               <div className="text-center py-4 relative">

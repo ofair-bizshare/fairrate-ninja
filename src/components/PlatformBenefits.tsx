@@ -31,6 +31,10 @@ const PlatformBenefits: React.FC = () => {
     };
   }, []);
 
+  const scrollToPromotion = () => {
+    document.getElementById('promotion-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div ref={sectionRef} className="w-full py-16">
       <div className="container mx-auto px-4">
@@ -110,7 +114,10 @@ const PlatformBenefits: React.FC = () => {
         </div>
         
         <div className="mt-12 flex justify-center">
-          <button className="ofair-button rtl">
+          <button 
+            className="ofair-button rtl"
+            onClick={scrollToPromotion}
+          >
             נסו את oFair עכשיו – זה בחינם!
           </button>
         </div>

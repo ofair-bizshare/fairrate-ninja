@@ -94,7 +94,14 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
       return;
     }
     
+    // This is the function that actually submits the rating - make sure it's called
     onRatingChange(ratings, weightedAverage, profName);
+    
+    // Show toast for confirmation
+    toast({
+      title: "הדירוג נשלח בהצלחה!",
+      description: `תודה על הדירוג של ${profName}`,
+    });
   };
 
   const renderStars = (criterionId: string, value: number) => {
@@ -110,8 +117,10 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
             key={`${criterionId}-${num}`}
             className={cn(
               "w-10 h-10 rounded-md flex items-center justify-center border transition-all",
-              (displayValue === num || ratings[criterionId] === num)
+              (displayValue === num)
                 ? "bg-blue-500 text-white border-blue-500" 
+                : ratings[criterionId] === num
+                ? "bg-blue-500 text-white border-blue-500"
                 : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
             )}
             onClick={() => handleRatingChange(criterionId, num)}

@@ -20,6 +20,13 @@ const Index = () => {
     setRatings(newRatings);
     setWeightedAverage(average);
     setProfName(ratedProfName);
+    setShowSubmitSuccess(true);
+    
+    // Show success message
+    toast({
+      title: "הדירוג התקבל!",
+      description: `תודה על הדירוג של ${ratedProfName}`,
+    });
   };
 
   const scrollToPromotion = () => {
