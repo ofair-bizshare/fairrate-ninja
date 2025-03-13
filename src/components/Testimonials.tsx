@@ -1,46 +1,62 @@
 
-import React, { useRef, useEffect } from 'react';
-import { Star, Quote } from 'lucide-react';
+import React, { useRef, useEffect, useState } from 'react';
+import { Star, Quote, ThumbsUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface Testimonial {
+interface RatedProfessional {
   id: number;
-  name: string;
+  profName: string;
   project: string;
   rating: number;
-  content: string;
+  recommendation: string;
+  customer: string;
   date: string;
 }
 
-const testimonials: Testimonial[] = [
+// Initial sample data
+const initialRatedProfessionals: RatedProfessional[] = [
   {
     id: 1,
-    name: "אלון ישראלי",
-    project: "שיפוץ דירה",
-    rating: 4.9,
-    content: "השתמשתי ב-oFair למציאת קבלן שיפוצים. קיבלתי 5 הצעות מחיר תוך שעה, והצלחתי לחסוך אלפי שקלים! הקבלן שבחרתי היה מעולה ועמד בכל הציפיות.",
+    profName: "משה הנגר",
+    project: "עבודות נגרות",
+    rating: 4.8,
+    recommendation: "משה ביצע עבודה מצוינת, הגיע בזמן והיה מקצועי מאוד. אני ממליץ עליו בחום לכל מי שמחפש נגר איכותי.",
+    customer: "ישראל ישראלי",
     date: "לפני חודש"
   },
   {
     id: 2,
-    name: "מיכל לוי",
-    project: "התקנת מזגן",
-    rating: 4.8,
-    content: "חיפשתי מתקין מזגנים דחוף בקיץ. דרך oFair מצאתי בעל מקצוע אמין שהגיע תוך יומיים במחיר הוגן. חסכתי המון זמן בחיפושים.",
-    date: "לפני 3 חודשים"
+    profName: "יוסי החשמלאי",
+    project: "התקנת מערכת חשמל",
+    rating: 4.7,
+    recommendation: "יוסי הגיע מהר, פתר את הבעיה ביעילות והמחיר היה הוגן. שירות מעולה!",
+    customer: "רונית לוי",
+    date: "לפני 3 שבועות"
   },
   {
     id: 3,
-    name: "דוד כהן",
-    project: "עבודות גינון",
-    rating: 5.0,
-    content: "מערכת הדירוג ב-oFair עזרה לי למצוא גנן מצוין. הדירוגים היו מדויקים והתוצאה הייתה מושלמת. ממליץ בחום!",
+    profName: "אבי השרברב",
+    project: "תיקון נזילה",
+    rating: 4.9,
+    recommendation: "אבי הגיע תוך שעה, איתר את הנזילה המורכבת ותיקן אותה במהירות. מקצועי, אדיב ואמין.",
+    customer: "דוד כהן",
     date: "לפני שבועיים"
   }
 ];
 
 const Testimonials: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [ratedProfessionals, setRatedProfessionals] = useState<RatedProfessional[]>(initialRatedProfessionals);
+  
+  // This would be replaced with actual data fetching in a real implementation
+  useEffect(() => {
+    // We would fetch the rated professionals data here
+    // For now, we're using the initial data
+    
+    // Filter professionals with rating above 4.2
+    const filteredProfessionals = ratedProfessionals.filter(prof => prof.rating >= 4.2);
+    setRatedProfessionals(filteredProfessionals);
+  }, []);
   
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -66,15 +82,22 @@ const Testimonials: React.FC = () => {
     };
   }, []);
 
+  // Function to update rated professionals (would be called when new ratings are submitted)
+  const updateRatedProfessionals = (newProfessional: RatedProfessional) => {
+    if (newProfessional.rating >= 4.2) {
+      setRatedProfessionals(prev => [...prev, newProfessional]);
+    }
+  };
+
   return (
     <div className="w-full py-16 bg-gradient-to-b from-background to-blue-50/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <div className="ofair-chip mb-2">חוויות אמיתיות</div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 rtl">מה אומרים עלינו</h2>
+          <div className="ofair-chip mb-2">בעלי מקצוע מומלצים</div>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 rtl">לקוחות שכבר דירגו את בעל המקצוע שלהם ואיפשרו לו להכנס לעופר</h2>
           <div className="h-divider"></div>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto rtl">
-            לקוחות שכבר מצאו את בעלי המקצוע המושלמים דרך oFair
+            בעלי מקצוע שקיבלו ציון מעל 4.2 מופיעים כאן ונהנים מפלטפורמת oFair
           </p>
         </div>
 
@@ -82,9 +105,9 @@ const Testimonials: React.FC = () => {
           ref={sectionRef}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 section-transition"
         >
-          {testimonials.map((testimonial, index) => (
+          {ratedProfessionals.map((professional, index) => (
             <div 
-              key={testimonial.id} 
+              key={professional.id} 
               className={cn(
                 "ofair-card h-full flex flex-col relative",
                 "hover:translate-y-[-5px]"
@@ -93,27 +116,33 @@ const Testimonials: React.FC = () => {
             >
               <Quote className="h-8 w-8 text-primary/20 absolute top-4 right-4" />
               
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 mb-2">
                 <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
-                  {testimonial.name.charAt(0)}
+                  {professional.profName.charAt(0)}
                 </div>
                 <div>
-                  <h4 className="font-medium rtl">{testimonial.name}</h4>
-                  <p className="text-xs text-muted-foreground rtl">{testimonial.project}</p>
+                  <h4 className="font-medium rtl">{professional.profName}</h4>
+                  <p className="text-xs text-muted-foreground rtl">{professional.project}</p>
                 </div>
               </div>
               
               <div className="flex items-center gap-1 mb-3">
-                <span className="font-bold">{testimonial.rating}</span>
+                <span className="font-bold">{professional.rating.toFixed(1)}</span>
                 <Star className="h-4 w-4 text-yellow-400" fill="#facc15" />
               </div>
               
               <p className="text-muted-foreground flex-grow rtl">
-                "{testimonial.content}"
+                "{professional.recommendation}"
               </p>
               
-              <div className="text-xs text-muted-foreground mt-4 rtl">
-                {testimonial.date}
+              <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
+                <div className="text-xs text-muted-foreground rtl">
+                  {professional.date}
+                </div>
+                <div className="text-xs rtl">
+                  <span className="text-gray-600">דורג על ידי: </span>
+                  <span className="font-medium">{professional.customer}</span>
+                </div>
               </div>
             </div>
           ))}

@@ -13,13 +13,22 @@ const Index = () => {
   const [weightedAverage, setWeightedAverage] = useState<number>(0);
   const [showSubmitSuccess, setShowSubmitSuccess] = useState(false);
   const [profName, setProfName] = useState('');
+  const [recommendation, setRecommendation] = useState('');
   const { toast } = useToast();
   const promotionSectionRef = useRef<HTMLDivElement>(null);
 
-  const handleRatingChange = (newRatings: { [key: string]: number }, average: number, ratedProfName: string) => {
+  const handleRatingChange = (
+    newRatings: { [key: string]: number }, 
+    average: number, 
+    ratedProfName: string, 
+    ratedRecommendation?: string
+  ) => {
     setRatings(newRatings);
     setWeightedAverage(average);
     setProfName(ratedProfName);
+    if (ratedRecommendation) {
+      setRecommendation(ratedRecommendation);
+    }
     setShowSubmitSuccess(true);
     
     // Show success message

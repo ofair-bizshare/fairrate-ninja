@@ -13,7 +13,7 @@ interface RatingCriteria {
 }
 
 interface RatingSystemProps {
-  onRatingChange: (ratings: { [key: string]: number }, weightedAverage: number, profName: string) => void;
+  onRatingChange: (ratings: { [key: string]: number }, weightedAverage: number, profName: string, recommendation?: string) => void;
 }
 
 const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
@@ -27,9 +27,11 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
     recommendation: 0,
   });
   const [profName, setProfName] = useState('');
+  const [recommendation, setRecommendation] = useState('');
   const [hoveredRatings, setHoveredRatings] = useState<{ [key: string]: number }>({});
   const [weightedAverage, setWeightedAverage] = useState(0);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
   const { toast } = useToast();
 
   const criteria: RatingCriteria[] = [
@@ -59,6 +61,14 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
       ...prev,
       [criterionId]: value
     }));
+
+    // Clear error if field is now valid
+    if (errors[criterionId]) {
+      setErrors(prev => ({
+        ...prev,
+        [criterionId]: false
+      }));
+    }
   };
 
   const handleStarHover = (criterionId: string, value: number) => {
@@ -76,6 +86,16 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
     });
   };
 
+  const handleProfNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setProfName(e.target.value);
+    if (e.target.value.trim() && errors.profName) {
+      setErrors(prev => ({
+        ...prev,
+        profName: false
+      }));
+    }
+  };
+
   const resetForm = () => {
     setRatings({
       overall: 0,
@@ -87,30 +107,51 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
       recommendation: 0,
     });
     setProfName('');
+    setRecommendation('');
     setWeightedAverage(0);
+    setErrors({});
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: { [key: string]: boolean } = {};
+
+    // Check if professional name is provided
+    if (!profName.trim()) {
+      newErrors.profName = true;
+    }
+
+    // Check if at least one rating criteria is provided
+    let hasRating = false;
+    for (const criterion of criteria) {
+      if (ratings[criterion.id] > 0) {
+        hasRating = true;
+        break;
+      }
+    }
+
+    if (!hasRating) {
+      // Mark all criteria as errors
+      for (const criterion of criteria) {
+        newErrors[criterion.id] = true;
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = () => {
-    if (weightedAverage === 0) {
+    if (!validateForm()) {
       toast({
-        title: "לא ניתן לשלוח",
-        description: "נא לדרג לפחות קריטריון אחד",
+        title: "אנא תקנו את השדות המסומנים",
+        description: "יש למלא את כל השדות הנדרשים כדי לשלוח את הדירוג",
         variant: "destructive",
       });
       return;
     }
     
-    if (!profName.trim()) {
-      toast({
-        title: "חסרים פרטים",
-        description: "נא להזין את שם בעל המקצוע",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // This is the function that actually submits the rating - make sure it's called
-    onRatingChange(ratings, weightedAverage, profName);
+    // This is the function that actually submits the rating
+    onRatingChange(ratings, weightedAverage, profName, recommendation);
     
     // Show success popup
     setShowSuccessPopup(true);
@@ -145,6 +186,7 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
             key={`${criterionId}-${num}`}
             className={cn(
               "w-10 h-10 rounded-md flex items-center justify-center border transition-all",
+              errors[criterionId] && value === 0 ? "border-red-500" : "",
               (displayValue === num)
                 ? "bg-blue-500 text-white border-blue-500" 
                 : ratings[criterionId] === num
@@ -172,19 +214,26 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
           type="text"
           id="profName"
           value={profName}
-          onChange={(e) => setProfName(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl"
+          onChange={handleProfNameChange}
+          className={cn(
+            "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl",
+            errors.profName ? "border-red-500 bg-red-50" : "border-gray-300"
+          )}
           placeholder="הזינו את שם בעל המקצוע"
           required
         />
+        {errors.profName && (
+          <p className="text-red-500 text-sm mt-1 rtl">נא להזין את שם בעל המקצוע</p>
+        )}
       </div>
       
-      <div className="space-y-6">
+      <div className="space-y-6 mb-6">
         {criteria.map((criterion) => (
           <div 
             key={criterion.id} 
             className={cn(
               "flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl transition-all rtl",
+              errors[criterion.id] ? "bg-red-50 border border-red-200" : 
               ratings[criterion.id] > 0 ? "bg-blue-50" : "bg-gray-50"
             )}
           >
@@ -199,14 +248,21 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
         ))}
       </div>
 
+      <div className="mb-6">
+        <label htmlFor="recommendation" className="block text-sm font-medium text-gray-700 mb-1 rtl">המלצה (אופציונלי)</label>
+        <textarea
+          id="recommendation"
+          value={recommendation}
+          onChange={(e) => setRecommendation(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl h-32 resize-none"
+          placeholder="ספרו לנו על החוויה שלכם עם בעל המקצוע"
+        />
+      </div>
+
       <div className="mt-8 text-center">
         <button 
           type="button"
-          className={cn(
-            "ofair-button px-8",
-            weightedAverage === 0 || !profName.trim() ? "opacity-70 cursor-not-allowed" : ""
-          )}
-          disabled={weightedAverage === 0 || !profName.trim()}
+          className="ofair-button px-8 hover:bg-primary-dark active:bg-primary-darker transition-colors"
           onClick={handleSubmit}
         >
           שלחו את הדירוג
