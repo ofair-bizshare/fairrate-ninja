@@ -284,7 +284,7 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
 
       {/* Success Popup */}
       {showSuccessPopup && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
           <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 relative">
             <button 
               onClick={closePopup}
