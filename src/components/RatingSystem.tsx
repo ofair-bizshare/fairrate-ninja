@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Star, X, Facebook, Instagram } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
@@ -30,7 +29,6 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
   const [recommendation, setRecommendation] = useState('');
   const [hoveredRatings, setHoveredRatings] = useState<{ [key: string]: number }>({});
   const [weightedAverage, setWeightedAverage] = useState(0);
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
   const { toast } = useToast();
 
@@ -45,7 +43,6 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
   ];
 
   useEffect(() => {
-    // Calculate weighted average
     const totalWeight = criteria.reduce((sum, criterion) => sum + criterion.weight, 0);
     const weightedSum = criteria.reduce(
       (sum, criterion) => sum + (ratings[criterion.id] * criterion.weight),
@@ -62,7 +59,6 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
       [criterionId]: value
     }));
 
-    // Clear error if field is now valid
     if (errors[criterionId]) {
       setErrors(prev => ({
         ...prev,
@@ -115,12 +111,10 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: boolean } = {};
 
-    // Check if professional name is provided
     if (!profName.trim()) {
       newErrors.profName = true;
     }
 
-    // Check if at least one rating criteria is provided
     let hasRating = false;
     for (const criterion of criteria) {
       if (ratings[criterion.id] > 0) {
@@ -130,7 +124,6 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
     }
 
     if (!hasRating) {
-      // Mark all criteria as errors
       for (const criterion of criteria) {
         newErrors[criterion.id] = true;
       }
@@ -150,27 +143,14 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
       return;
     }
     
-    // This is the function that actually submits the rating
     onRatingChange(ratings, weightedAverage, profName, recommendation);
     
-    // Show success popup
-    setShowSuccessPopup(true);
-    
-    // Show toast for confirmation
     toast({
       title: "הדירוג נשלח בהצלחה!",
       description: `תודה על הדירוג של ${profName}`,
     });
-  };
-
-  const closePopup = () => {
-    setShowSuccessPopup(false);
+    
     resetForm();
-  };
-
-  const scrollToBenefits = () => {
-    document.getElementById('benefits-section')?.scrollIntoView({ behavior: 'smooth' });
-    closePopup();
   };
 
   const renderStars = (criterionId: string, value: number) => {
@@ -281,61 +261,6 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
           </div>
         </div>
       </div>
-
-      {/* Success Popup */}
-      {showSuccessPopup && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 relative">
-            <button 
-              onClick={closePopup}
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
-            >
-              <X className="h-6 w-6" />
-            </button>
-            
-            <div className="text-center mb-6">
-              <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                <Star className="h-8 w-8 text-green-500" />
-              </div>
-              <h3 className="text-xl font-bold rtl">תודה על הדירוג!</h3>
-              <p className="text-muted-foreground mt-2 rtl">
-                הדירוג שלך יעזור לאחרים למצוא בעלי מקצוע איכותיים
-              </p>
-            </div>
-            
-            <div className="mb-6">
-              <h4 className="font-medium text-center mb-3 rtl">עקבו אחרינו ברשתות החברתיות</h4>
-              <div className="flex justify-center gap-4">
-                <a 
-                  href="https://www.facebook.com/profile.php?id=61573771175534#" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors"
-                >
-                  <Facebook className="h-5 w-5" />
-                </a>
-                <a 
-                  href="https://www.instagram.com/ofair_il?fbclid=IwZXh0bgNhZW0CMTAAAR1Hdq28l9YzB4sHU41YXjS5UYVD_LihmktdeE0cqacfrxkIm1ryJ6_Y3qQ_aem_uZmC0wj1Asq9SbLb9ZLcWg" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="bg-gradient-to-tr from-purple-600 via-pink-500 to-orange-400 text-white p-2 rounded-full hover:opacity-90 transition-opacity"
-                >
-                  <Instagram className="h-5 w-5" />
-                </a>
-              </div>
-            </div>
-            
-            <div className="text-center">
-              <button
-                onClick={scrollToBenefits}
-                className="ofair-button bg-secondary/80 text-secondary-foreground hover:bg-secondary"
-              >
-                מה זה oFair?
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
