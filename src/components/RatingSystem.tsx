@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { Professional } from '@/services/supabaseService';
 
 interface RatingCriteria {
   id: string;
@@ -13,9 +15,10 @@ interface RatingCriteria {
 
 interface RatingSystemProps {
   onRatingChange: (ratings: { [key: string]: number }, weightedAverage: number, profName: string, recommendation?: string) => void;
+  professional?: Professional | null;
 }
 
-const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
+const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professional }) => {
   const [ratings, setRatings] = useState<{ [key: string]: number }>({
     overall: 0,
     timing: 0,
@@ -25,12 +28,23 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
     cleanliness: 0,
     recommendation: 0,
   });
-  const [profName, setProfName] = useState('');
+  const [profName, setProfName] = useState(professional?.name || '');
+  const [profPhone, setProfPhone] = useState(professional?.phone_number || '');
+  const [companyName, setCompanyName] = useState(professional?.company_name || '');
   const [recommendation, setRecommendation] = useState('');
   const [hoveredRatings, setHoveredRatings] = useState<{ [key: string]: number }>({});
   const [weightedAverage, setWeightedAverage] = useState(0);
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
   const { toast } = useToast();
+
+  // Update the fields when professional data changes
+  useEffect(() => {
+    if (professional) {
+      setProfName(professional.name || '');
+      setProfPhone(professional.phone_number || '');
+      setCompanyName(professional.company_name || '');
+    }
+  }, [professional]);
 
   const criteria: RatingCriteria[] = [
     { id: 'overall', label: 'דירוג כולל', value: ratings.overall, icon: '⭐', weight: 1.5 },
@@ -102,7 +116,11 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
       cleanliness: 0,
       recommendation: 0,
     });
-    setProfName('');
+    if (!professional) {
+      setProfName('');
+      setProfPhone('');
+      setCompanyName('');
+    }
     setRecommendation('');
     setWeightedAverage(0);
     setErrors({});
@@ -194,18 +212,57 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange }) => {
           type="text"
           id="profName"
           value={profName}
-          onChange={handleProfNameChange}
+          onChange={professional ? undefined : (e) => setProfName(e.target.value)}
           className={cn(
             "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl",
-            errors.profName ? "border-red-500 bg-red-50" : "border-gray-300"
+            errors.profName ? "border-red-500 bg-red-50" : "border-gray-300",
+            professional ? "bg-gray-100" : ""
           )}
           placeholder="הזינו את שם בעל המקצוע"
+          readOnly={!!professional}
           required
         />
         {errors.profName && (
           <p className="text-red-500 text-sm mt-1 rtl">נא להזין את שם בעל המקצוע</p>
         )}
       </div>
+
+      {/* Phone Number Field (Read-only if prefilled) */}
+      <div className="mb-6">
+        <label htmlFor="profPhone" className="block text-sm font-medium text-gray-700 mb-1 rtl">מספר טלפון*</label>
+        <input
+          type="tel"
+          id="profPhone"
+          value={profPhone}
+          onChange={professional ? undefined : (e) => setProfPhone(e.target.value)}
+          className={cn(
+            "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl",
+            "bg-gray-100"
+          )}
+          placeholder="מספר טלפון"
+          readOnly={true}
+          required
+        />
+      </div>
+
+      {/* Company Name Field (Read-only if prefilled) */}
+      {(companyName || professional) && (
+        <div className="mb-6">
+          <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1 rtl">שם החברה</label>
+          <input
+            type="text"
+            id="companyName"
+            value={companyName}
+            onChange={professional ? undefined : (e) => setCompanyName(e.target.value)}
+            className={cn(
+              "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl",
+              "bg-gray-100"
+            )}
+            placeholder="שם החברה"
+            readOnly={true}
+          />
+        </div>
+      )}
       
       <div className="space-y-6 mb-6">
         {criteria.map((criterion) => (

@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Star, Facebook, Instagram, X } from 'lucide-react';
+import { useParams } from 'react-router-dom';
 import RatingSystem from '@/components/RatingSystem';
 import PlatformBenefits from '@/components/PlatformBenefits';
 import Testimonials from '@/components/Testimonials';
@@ -8,6 +9,7 @@ import PromotionBanner from '@/components/PromotionBanner';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { getProfessionalByPhone, Professional } from '@/services/supabaseService';
 
 const Index = () => {
   const [ratings, setRatings] = useState<{ [key: string]: number }>({});
@@ -15,8 +17,43 @@ const Index = () => {
   const [showSubmitSuccess, setShowSubmitSuccess] = useState(false);
   const [profName, setProfName] = useState('');
   const [recommendation, setRecommendation] = useState('');
+  const [professional, setProfessional] = useState<Professional | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const promotionSectionRef = useRef<HTMLDivElement>(null);
+  const { phoneNumber } = useParams<{ phoneNumber: string }>();
+  
+  // Fetch professional data if phone number is in the URL
+  useEffect(() => {
+    const fetchProfessionalData = async () => {
+      if (!phoneNumber) return;
+      
+      setIsLoading(true);
+      try {
+        const professionalData = await getProfessionalByPhone(phoneNumber);
+        if (professionalData) {
+          setProfessional(professionalData);
+        } else {
+          toast({
+            title: "לא נמצא בעל מקצוע",
+            description: "מספר הטלפון שהוזן לא נמצא במערכת",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching professional data:", error);
+        toast({
+          title: "שגיאה בטעינת נתונים",
+          description: "אירעה שגיאה בעת טעינת נתוני בעל המקצוע",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchProfessionalData();
+  }, [phoneNumber, toast]);
 
   const handleRatingChange = (
     newRatings: { [key: string]: number }, 
@@ -76,7 +113,10 @@ const Index = () => {
             </div>
             
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 max-w-4xl mx-auto leading-tight">
-              דרגו את בעל המקצוע שלכם ועזרו לו להכנס לפלטפורמת מציאת אנשי המקצוע החדשנית של ישראל
+              {professional 
+                ? `דרגו את ${professional.name} ${professional.company_name ? `מחברת ${professional.company_name}` : ''}`
+                : "דרגו את בעל המקצוע שלכם ועזרו לו להכנס לפלטפורמת מציאת אנשי המקצוע החדשנית של ישראל"
+              }
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               בעזרת הדירוגים שלכם, אנחנו יוצרים קהילה של בעלי מקצוע אמינים ומדויקים יותר.
@@ -107,7 +147,13 @@ const Index = () => {
       {/* Rating Section */}
       <section id="rating-section" className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <RatingSystem onRatingChange={handleRatingChange} />
+          {isLoading ? (
+            <div className="flex justify-center items-center p-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          ) : (
+            <RatingSystem onRatingChange={handleRatingChange} professional={professional} />
+          )}
         </div>
       </section>
       
