@@ -44,19 +44,41 @@ const initialRatedProfessionals: RatedProfessional[] = [
   }
 ];
 
-const Testimonials: React.FC = () => {
+interface TestimonialsProps {
+  newRecommendation?: {
+    profName: string;
+    rating: number;
+    recommendation: string;
+    customer: string;
+  };
+}
+
+const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [ratedProfessionals, setRatedProfessionals] = useState<RatedProfessional[]>(initialRatedProfessionals);
   
-  // This would be replaced with actual data fetching in a real implementation
+  // Add new recommendation if it exists and has a high rating
   useEffect(() => {
-    // We would fetch the rated professionals data here
-    // For now, we're using the initial data
-    
-    // Filter professionals with rating above 4.2
-    const filteredProfessionals = ratedProfessionals.filter(prof => prof.rating >= 4.2);
-    setRatedProfessionals(filteredProfessionals);
-  }, []);
+    if (newRecommendation && newRecommendation.rating >= 4.2 && newRecommendation.recommendation) {
+      const newProfessional: RatedProfessional = {
+        id: Date.now(), // Use timestamp as a unique ID
+        profName: newRecommendation.profName,
+        project: "עבודה מקצועית",
+        rating: newRecommendation.rating,
+        recommendation: newRecommendation.recommendation,
+        customer: newRecommendation.customer,
+        date: "עכשיו"
+      };
+      
+      // Replace the first testimonial to maintain the same number of visible testimonials
+      setRatedProfessionals(prev => {
+        const updated = [...prev];
+        updated.shift(); // Remove the first item
+        updated.push(newProfessional); // Add new item at the end
+        return updated;
+      });
+    }
+  }, [newRecommendation]);
   
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -81,13 +103,6 @@ const Testimonials: React.FC = () => {
       }
     };
   }, []);
-
-  // Function to update rated professionals (would be called when new ratings are submitted)
-  const updateRatedProfessionals = (newProfessional: RatedProfessional) => {
-    if (newProfessional.rating >= 4.2) {
-      setRatedProfessionals(prev => [...prev, newProfessional]);
-    }
-  };
 
   return (
     <div className="w-full py-16 bg-gradient-to-b from-background to-blue-50/30">

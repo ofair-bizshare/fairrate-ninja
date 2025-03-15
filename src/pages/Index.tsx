@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Star, Facebook, Instagram, X } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
@@ -16,11 +17,30 @@ const Index = () => {
   const [showSubmitSuccess, setShowSubmitSuccess] = useState(false);
   const [profName, setProfName] = useState('');
   const [recommendation, setRecommendation] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
   const [professional, setProfessional] = useState<Professional | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentTitle, setCurrentTitle] = useState<number>(0);
+  const [newRecommendation, setNewRecommendation] = useState<any>(null);
   const { toast } = useToast();
   const promotionSectionRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  
+  // Dynamic title rotation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTitle(prev => prev === 0 ? 1 : 0);
+    }, 2000);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  // Title options
+  const titles = [
+    "לפלטפורמת מציאת אנשי המקצוע החדשנית של ישראל",
+    "למערכת החדשנית למציאת בעל מקצוע - מעלים, משווים, מרוויחים"
+  ];
   
   useEffect(() => {
     const fetchProfessionalData = async () => {
@@ -76,14 +96,30 @@ const Index = () => {
     newRatings: { [key: string]: number }, 
     average: number, 
     ratedProfName: string, 
-    ratedRecommendation?: string
+    ratedRecommendation?: string,
+    ratedCustomerName?: string,
+    ratedCustomerPhone?: string
   ) => {
     setRatings(newRatings);
     setWeightedAverage(average);
     setProfName(ratedProfName);
+    setCustomerName(ratedCustomerName || '');
+    setCustomerPhone(ratedCustomerPhone || '');
+    
     if (ratedRecommendation) {
       setRecommendation(ratedRecommendation);
     }
+    
+    // If rating is above 4.2 and has recommendation, update testimonials
+    if (average >= 4.2 && ratedRecommendation && ratedRecommendation.trim() !== '') {
+      setNewRecommendation({
+        profName: ratedProfName,
+        rating: average,
+        recommendation: ratedRecommendation,
+        customer: ratedCustomerName || 'לקוח/ה',
+      });
+    }
+    
     setShowSubmitSuccess(true);
     
     toast({
@@ -117,11 +153,11 @@ const Index = () => {
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center animate-fade-in">
             <div className="flex justify-center mb-8">
-              <div className="rounded-full border-4 border-primary p-4">
+              <div className="rounded-full border-8 border-primary p-6 shadow-lg transform hover:scale-105 transition-all duration-300">
                 <img 
                   src="/lovable-uploads/00f51801-ae0f-45ec-bf78-c1903df9abee.png" 
                   alt="oFair Logo" 
-                  className="h-48 w-48 object-contain rounded-full" 
+                  className="h-56 w-56 object-contain rounded-full" 
                 />
               </div>
             </div>
@@ -129,7 +165,17 @@ const Index = () => {
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 max-w-4xl mx-auto leading-tight">
               {professional 
                 ? `דרגו את ${professional.first_name} ${professional.last_name} ${professional.company_name ? `מחברת ${professional.company_name}` : ''}`
-                : "דרגו את בעל המקצוע שלכם ועזרו לו להכנס לפלטפורמת מציאת אנשי המקצוע החדשנית של ישראל"
+                : (
+                  <>
+                    דרגו את בעל המקצוע שלכם ועזרו לו להכנס{" "}
+                    <span className={cn(
+                      "transition-all duration-500",
+                      currentTitle === 1 ? "text-green-500 font-extrabold" : ""
+                    )}>
+                      {titles[currentTitle]}
+                    </span>
+                  </>
+                )
               }
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
@@ -147,8 +193,9 @@ const Index = () => {
                 דרגו עכשיו
               </button>
               <button 
-                className="inline-flex items-center justify-center rounded-xl px-8 py-3 text-base font-medium 
-                        transition-all duration-300 bg-secondary/80 text-secondary-foreground hover:bg-secondary"
+                className="inline-flex items-center justify-center rounded-xl px-10 py-4 text-lg font-bold 
+                        transition-all duration-300 bg-green-500 text-white hover:bg-green-600
+                        shadow-lg hover:shadow-xl transform hover:scale-105"
                 onClick={scrollToBenefits}
               >
                 מה זה oFair
@@ -178,7 +225,7 @@ const Index = () => {
         <PromotionBanner />
       </section>
 
-      <Testimonials />
+      <Testimonials newRecommendation={newRecommendation} />
 
       <footer className="bg-white py-12 border-t border-gray-100">
         <div className="container mx-auto px-4">

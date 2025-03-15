@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -13,7 +14,7 @@ interface RatingCriteria {
 }
 
 interface RatingSystemProps {
-  onRatingChange: (ratings: { [key: string]: number }, weightedAverage: number, profName: string, recommendation?: string) => void;
+  onRatingChange: (ratings: { [key: string]: number }, weightedAverage: number, profName: string, recommendation?: string, customerName?: string, customerPhone?: string) => void;
   professional?: Professional | null;
 }
 
@@ -30,6 +31,8 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
   const [profName, setProfName] = useState('');
   const [profPhone, setProfPhone] = useState('');
   const [companyName, setCompanyName] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
   const [recommendation, setRecommendation] = useState('');
   const [hoveredRatings, setHoveredRatings] = useState<{ [key: string]: number }>({});
   const [weightedAverage, setWeightedAverage] = useState(0);
@@ -106,6 +109,26 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
     }
   };
 
+  const handleCustomerNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomerName(e.target.value);
+    if (e.target.value.trim() && errors.customerName) {
+      setErrors(prev => ({
+        ...prev,
+        customerName: false
+      }));
+    }
+  };
+
+  const handleCustomerPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomerPhone(e.target.value);
+    if (e.target.value.trim() && errors.customerPhone) {
+      setErrors(prev => ({
+        ...prev,
+        customerPhone: false
+      }));
+    }
+  };
+
   const resetForm = () => {
     setRatings({
       overall: 0,
@@ -121,6 +144,8 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
       setProfPhone('');
       setCompanyName('');
     }
+    setCustomerName('');
+    setCustomerPhone('');
     setRecommendation('');
     setWeightedAverage(0);
     setErrors({});
@@ -128,6 +153,14 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
 
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: boolean } = {};
+
+    if (!customerName.trim()) {
+      newErrors.customerName = true;
+    }
+
+    if (!customerPhone.trim()) {
+      newErrors.customerPhone = true;
+    }
 
     if (!profName.trim()) {
       newErrors.profName = true;
@@ -161,7 +194,7 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
       return;
     }
     
-    onRatingChange(ratings, weightedAverage, profName, recommendation);
+    onRatingChange(ratings, weightedAverage, profName, recommendation, customerName, customerPhone);
     
     resetForm();
   };
@@ -201,57 +234,103 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
     <div className="w-full max-w-2xl mx-auto ofair-card">
       <h2 className="text-2xl font-bold text-center mb-6 rtl">דרגו את בעל המקצוע</h2>
       
+      {/* Customer Details Section */}
       <div className="mb-6">
-        <label htmlFor="profName" className="block text-sm font-medium text-gray-700 mb-1 rtl">שם בעל המקצוע*</label>
-        <input
-          type="text"
-          id="profName"
-          value={profName}
-          onChange={professional ? undefined : handleProfNameChange}
-          className={cn(
-            "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl",
-            errors.profName ? "border-red-500 bg-red-50" : "border-gray-300",
-            professional ? "bg-gray-100" : ""
-          )}
-          placeholder="הזינו את שם בעל המקצוע"
-          readOnly={!!professional}
-          required
-        />
-        {errors.profName && (
-          <p className="text-red-500 text-sm mt-1 rtl">נא להזין את שם בעל המקצוע</p>
-        )}
-      </div>
-
-      {/* Phone Number Field (Read-only if prefilled) */}
-      <div className="mb-6">
-        <label htmlFor="profPhone" className="block text-sm font-medium text-gray-700 mb-1 rtl">מספר טלפון*</label>
-        <input
-          type="tel"
-          id="profPhone"
-          value={profPhone}
-          onChange={professional ? undefined : (e) => setProfPhone(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-gray-100 rtl"
-          placeholder="מספר טלפון"
-          readOnly={true}
-          required
-        />
-      </div>
-
-      {/* Company Name Field (Read-only if prefilled) */}
-      {(companyName || professional) && (
-        <div className="mb-6">
-          <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1 rtl">שם החברה</label>
+        <h3 className="text-lg font-medium mb-3 rtl">פרטי הלקוח</h3>
+        
+        <div className="mb-4">
+          <label htmlFor="customerName" className="block text-sm font-medium text-gray-700 mb-1 rtl">שם מלא של הלקוח*</label>
           <input
             type="text"
-            id="companyName"
-            value={companyName}
-            onChange={professional ? undefined : (e) => setCompanyName(e.target.value)}
+            id="customerName"
+            value={customerName}
+            onChange={handleCustomerNameChange}
+            className={cn(
+              "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl",
+              errors.customerName ? "border-red-500 bg-red-50" : "border-gray-300"
+            )}
+            placeholder="הזינו את השם המלא שלכם"
+            required
+          />
+          {errors.customerName && (
+            <p className="text-red-500 text-sm mt-1 rtl">נא להזין את השם המלא שלכם</p>
+          )}
+        </div>
+        
+        <div className="mb-4">
+          <label htmlFor="customerPhone" className="block text-sm font-medium text-gray-700 mb-1 rtl">מספר טלפון של הלקוח*</label>
+          <input
+            type="tel"
+            id="customerPhone"
+            value={customerPhone}
+            onChange={handleCustomerPhoneChange}
+            className={cn(
+              "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl",
+              errors.customerPhone ? "border-red-500 bg-red-50" : "border-gray-300"
+            )}
+            placeholder="הזינו את מספר הטלפון שלכם"
+            required
+          />
+          {errors.customerPhone && (
+            <p className="text-red-500 text-sm mt-1 rtl">נא להזין את מספר הטלפון שלכם</p>
+          )}
+        </div>
+      </div>
+      
+      {/* Professional Details Section */}
+      <div className="mb-6">
+        <h3 className="text-lg font-medium mb-3 rtl">פרטי בעל המקצוע</h3>
+        
+        <div className="mb-4">
+          <label htmlFor="profName" className="block text-sm font-medium text-gray-700 mb-1 rtl">שם בעל המקצוע*</label>
+          <input
+            type="text"
+            id="profName"
+            value={profName}
+            onChange={professional ? undefined : handleProfNameChange}
+            className={cn(
+              "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl",
+              errors.profName ? "border-red-500 bg-red-50" : "border-gray-300",
+              professional ? "bg-gray-100" : ""
+            )}
+            placeholder="הזינו את שם בעל המקצוע"
+            readOnly={!!professional}
+            required
+          />
+          {errors.profName && (
+            <p className="text-red-500 text-sm mt-1 rtl">נא להזין את שם בעל המקצוע</p>
+          )}
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="profPhone" className="block text-sm font-medium text-gray-700 mb-1 rtl">מספר טלפון*</label>
+          <input
+            type="tel"
+            id="profPhone"
+            value={profPhone}
+            onChange={professional ? undefined : (e) => setProfPhone(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-gray-100 rtl"
-            placeholder="שם החברה"
+            placeholder="מספר טלפון"
             readOnly={true}
+            required
           />
         </div>
-      )}
+
+        {(companyName || professional) && (
+          <div className="mb-4">
+            <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1 rtl">שם החברה</label>
+            <input
+              type="text"
+              id="companyName"
+              value={companyName}
+              onChange={professional ? undefined : (e) => setCompanyName(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-gray-100 rtl"
+              placeholder="שם החברה"
+              readOnly={true}
+            />
+          </div>
+        )}
+      </div>
       
       <div className="space-y-6 mb-6">
         {criteria.map((criterion) => (
