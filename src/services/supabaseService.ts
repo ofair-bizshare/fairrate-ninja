@@ -1,24 +1,20 @@
 
-import { createClient } from '@supabase/supabase-js';
-
-// Initialize Supabase client with public keys
-const supabaseUrl = 'https://your-supabase-url.supabase.co';
-const supabaseKey = 'your-supabase-anon-key';
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { supabase } from '@/integrations/supabase/client';
 
 export interface Professional {
-  name: string;
+  first_name: string;
+  last_name: string;
   company_name?: string;
-  phone_number: string;
+  phone: string;
 }
 
 export const getProfessionalByPhone = async (phone: string): Promise<Professional | null> => {
   try {
     const { data, error } = await supabase
       .from('users_signup')
-      .select('name, company_name, phone_number')
-      .eq('phone_number', phone)
-      .single();
+      .select('first_name, last_name, company_name, phone')
+      .eq('phone', phone)
+      .maybeSingle();
     
     if (error) {
       console.error('Error fetching professional data:', error);

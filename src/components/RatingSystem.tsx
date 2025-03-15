@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -28,9 +27,9 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
     cleanliness: 0,
     recommendation: 0,
   });
-  const [profName, setProfName] = useState(professional?.name || '');
-  const [profPhone, setProfPhone] = useState(professional?.phone_number || '');
-  const [companyName, setCompanyName] = useState(professional?.company_name || '');
+  const [profName, setProfName] = useState('');
+  const [profPhone, setProfPhone] = useState('');
+  const [companyName, setCompanyName] = useState('');
   const [recommendation, setRecommendation] = useState('');
   const [hoveredRatings, setHoveredRatings] = useState<{ [key: string]: number }>({});
   const [weightedAverage, setWeightedAverage] = useState(0);
@@ -40,8 +39,9 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
   // Update the fields when professional data changes
   useEffect(() => {
     if (professional) {
-      setProfName(professional.name || '');
-      setProfPhone(professional.phone_number || '');
+      const fullName = `${professional.first_name || ''} ${professional.last_name || ''}`.trim();
+      setProfName(fullName);
+      setProfPhone(professional.phone || '');
       setCompanyName(professional.company_name || '');
     }
   }, [professional]);
@@ -163,11 +163,6 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
     
     onRatingChange(ratings, weightedAverage, profName, recommendation);
     
-    toast({
-      title: "הדירוג נשלח בהצלחה!",
-      description: `תודה על הדירוג של ${profName}`,
-    });
-    
     resetForm();
   };
 
@@ -212,7 +207,7 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
           type="text"
           id="profName"
           value={profName}
-          onChange={professional ? undefined : (e) => setProfName(e.target.value)}
+          onChange={professional ? undefined : handleProfNameChange}
           className={cn(
             "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl",
             errors.profName ? "border-red-500 bg-red-50" : "border-gray-300",
@@ -235,10 +230,7 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
           id="profPhone"
           value={profPhone}
           onChange={professional ? undefined : (e) => setProfPhone(e.target.value)}
-          className={cn(
-            "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl",
-            "bg-gray-100"
-          )}
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-gray-100 rtl"
           placeholder="מספר טלפון"
           readOnly={true}
           required
@@ -254,10 +246,7 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
             id="companyName"
             value={companyName}
             onChange={professional ? undefined : (e) => setCompanyName(e.target.value)}
-            className={cn(
-              "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl",
-              "bg-gray-100"
-            )}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-gray-100 rtl"
             placeholder="שם החברה"
             readOnly={true}
           />

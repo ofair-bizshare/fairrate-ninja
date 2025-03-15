@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Star, Facebook, Instagram, X } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import RatingSystem from '@/components/RatingSystem';
 import PlatformBenefits from '@/components/PlatformBenefits';
 import Testimonials from '@/components/Testimonials';
@@ -21,16 +20,34 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const promotionSectionRef = useRef<HTMLDivElement>(null);
-  const { phoneNumber } = useParams<{ phoneNumber: string }>();
+  const location = useLocation();
   
-  // Fetch professional data if phone number is in the URL
   useEffect(() => {
     const fetchProfessionalData = async () => {
+      let phoneNumber = '';
+      
+      if (location.search && location.search.startsWith('?')) {
+        phoneNumber = location.search.substring(1).split('&')[0];
+      }
+      
+      if (!phoneNumber && location.pathname) {
+        const pathParts = location.pathname.split('/');
+        if (pathParts.length > 1 && pathParts[1]) {
+          phoneNumber = pathParts[1];
+        }
+      }
+      
+      phoneNumber = phoneNumber.replace(/\D/g, '');
+      
       if (!phoneNumber) return;
+      
+      console.log("Extracted phone number:", phoneNumber);
       
       setIsLoading(true);
       try {
         const professionalData = await getProfessionalByPhone(phoneNumber);
+        console.log("Fetched professional data:", professionalData);
+        
         if (professionalData) {
           setProfessional(professionalData);
         } else {
@@ -53,7 +70,7 @@ const Index = () => {
     };
     
     fetchProfessionalData();
-  }, [phoneNumber, toast]);
+  }, [location, toast]);
 
   const handleRatingChange = (
     newRatings: { [key: string]: number }, 
@@ -69,7 +86,6 @@ const Index = () => {
     }
     setShowSubmitSuccess(true);
     
-    // Show success message
     toast({
       title: "הדירוג התקבל!",
       description: `תודה על הדירוג של ${ratedProfName}`,
@@ -91,9 +107,7 @@ const Index = () => {
 
   return (
     <div dir="rtl" className="min-h-screen flex flex-col bg-background">
-      {/* Hero Section */}
       <header className="relative w-full min-h-[80vh] flex flex-col justify-center pt-20 pb-16 overflow-hidden">
-        {/* Background pattern */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-0 w-40 h-40 bg-blue-100 rounded-full opacity-50 blur-2xl"></div>
           <div className="absolute bottom-0 right-0 w-60 h-60 bg-blue-200 rounded-full opacity-40 blur-3xl"></div>
@@ -114,7 +128,7 @@ const Index = () => {
             
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 max-w-4xl mx-auto leading-tight">
               {professional 
-                ? `דרגו את ${professional.name} ${professional.company_name ? `מחברת ${professional.company_name}` : ''}`
+                ? `דרגו את ${professional.first_name} ${professional.last_name} ${professional.company_name ? `מחברת ${professional.company_name}` : ''}`
                 : "דרגו את בעל המקצוע שלכם ועזרו לו להכנס לפלטפורמת מציאת אנשי המקצוע החדשנית של ישראל"
               }
             </h1>
@@ -144,7 +158,6 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Rating Section */}
       <section id="rating-section" className="py-16 bg-white">
         <div className="container mx-auto px-4">
           {isLoading ? (
@@ -157,20 +170,16 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Platform Benefits Section */}
       <div id="benefits-section">
         <PlatformBenefits />
       </div>
 
-      {/* Promotion Banner */}
       <section id="promotion-section" ref={promotionSectionRef}>
         <PromotionBanner />
       </section>
 
-      {/* Testimonials Section */}
       <Testimonials />
 
-      {/* Footer */}
       <footer className="bg-white py-12 border-t border-gray-100">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center mb-12">
@@ -224,7 +233,6 @@ const Index = () => {
         </div>
       </footer>
 
-      {/* Success Popup */}
       {showSubmitSuccess && (
         <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center">
           <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 relative">
