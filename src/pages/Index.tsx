@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Star, Facebook, Instagram, X } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
@@ -21,26 +20,49 @@ const Index = () => {
   const [customerPhone, setCustomerPhone] = useState('');
   const [professional, setProfessional] = useState<Professional | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentTitle, setCurrentTitle] = useState<number>(0);
   const [newRecommendation, setNewRecommendation] = useState<any>(null);
   const { toast } = useToast();
   const promotionSectionRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   
-  // Dynamic title rotation
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTitle(prev => prev === 0 ? 1 : 0);
-    }, 2000);
-    
-    return () => clearInterval(interval);
-  }, []);
+  const [displayText, setDisplayText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [currentTitleIndex, setCurrentTitleIndex] = useState(0);
+  const [typingSpeed, setTypingSpeed] = useState(100);
   
-  // Title options
   const titles = [
     "לפלטפורמת מציאת אנשי המקצוע החדשנית של ישראל",
     "למערכת החדשנית למציאת בעל מקצוע - מעלים, משווים, מרוויחים"
   ];
+  
+  useEffect(() => {
+    const currentTitle = titles[currentTitleIndex];
+    
+    const timer = setTimeout(() => {
+      if (!isDeleting) {
+        setDisplayText(currentTitle.substring(0, displayText.length + 1));
+        
+        if (displayText.length === currentTitle.length) {
+          setTypingSpeed(3000);
+          setIsDeleting(true);
+        } else {
+          setTypingSpeed(100);
+        }
+      } else {
+        setDisplayText(currentTitle.substring(0, displayText.length - 1));
+        
+        if (displayText.length === 0) {
+          setIsDeleting(false);
+          setCurrentTitleIndex((currentTitleIndex + 1) % titles.length);
+          setTypingSpeed(500);
+        } else {
+          setTypingSpeed(50);
+        }
+      }
+    }, typingSpeed);
+    
+    return () => clearTimeout(timer);
+  }, [displayText, currentTitleIndex, isDeleting, typingSpeed, titles]);
   
   useEffect(() => {
     const fetchProfessionalData = async () => {
@@ -110,7 +132,6 @@ const Index = () => {
       setRecommendation(ratedRecommendation);
     }
     
-    // If rating is above 4.2 and has recommendation, update testimonials
     if (average >= 4.2 && ratedRecommendation && ratedRecommendation.trim() !== '') {
       setNewRecommendation({
         profName: ratedProfName,
@@ -169,10 +190,11 @@ const Index = () => {
                   <>
                     דרגו את בעל המקצוע שלכם ועזרו לו להכנס{" "}
                     <span className={cn(
-                      "transition-all duration-500",
-                      currentTitle === 1 ? "text-green-500 font-extrabold" : ""
+                      "transition-all duration-500 inline-block min-h-[40px]",
+                      currentTitleIndex === 1 ? "text-[#70EACD] font-extrabold" : ""
                     )}>
-                      {titles[currentTitle]}
+                      {displayText}
+                      <span className="animate-pulse">|</span>
                     </span>
                   </>
                 )
@@ -194,7 +216,7 @@ const Index = () => {
               </button>
               <button 
                 className="inline-flex items-center justify-center rounded-xl px-10 py-4 text-lg font-bold 
-                        transition-all duration-300 bg-green-500 text-white hover:bg-green-600
+                        transition-all duration-300 bg-[#70EACD] text-white hover:bg-opacity-90
                         shadow-lg hover:shadow-xl transform hover:scale-105"
                 onClick={scrollToBenefits}
               >

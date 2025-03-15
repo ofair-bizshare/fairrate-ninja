@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Star, Quote, ThumbsUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Dialog, DialogContent, DialogClose } from '@/components/ui/dialog';
 
 interface RatedProfessional {
   id: number;
@@ -56,6 +57,7 @@ interface TestimonialsProps {
 const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [ratedProfessionals, setRatedProfessionals] = useState<RatedProfessional[]>(initialRatedProfessionals);
+  const [activeTestimonial, setActiveTestimonial] = useState<RatedProfessional | null>(null);
   
   // Add new recommendation if it exists and has a high rating
   useEffect(() => {
@@ -104,6 +106,14 @@ const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
     };
   }, []);
 
+  const openTestimonialDialog = (professional: RatedProfessional) => {
+    setActiveTestimonial(professional);
+  };
+
+  const closeTestimonialDialog = () => {
+    setActiveTestimonial(null);
+  };
+
   return (
     <div className="w-full py-16 bg-gradient-to-b from-background to-blue-50/30">
       <div className="container mx-auto px-4">
@@ -125,9 +135,10 @@ const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
               key={professional.id} 
               className={cn(
                 "ofair-card h-full flex flex-col relative",
-                "hover:translate-y-[-5px]"
+                "hover:translate-y-[-5px] cursor-pointer"
               )}
               style={{ transitionDelay: `${index * 100}ms` }}
+              onClick={() => openTestimonialDialog(professional)}
             >
               <Quote className="h-8 w-8 text-primary/20 absolute top-4 right-4" />
               
@@ -146,7 +157,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
                 <Star className="h-4 w-4 text-yellow-400" fill="#facc15" />
               </div>
               
-              <p className="text-muted-foreground flex-grow rtl">
+              <p className="text-muted-foreground flex-grow rtl line-clamp-3">
                 "{professional.recommendation}"
               </p>
               
@@ -163,6 +174,46 @@ const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
           ))}
         </div>
       </div>
+
+      <Dialog open={!!activeTestimonial} onOpenChange={(open) => !open && closeTestimonialDialog()}>
+        <DialogContent className="max-w-lg rtl">
+          {activeTestimonial && (
+            <div className="pt-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-xl">
+                  {activeTestimonial.profName.charAt(0)}
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold">{activeTestimonial.profName}</h3>
+                  <p className="text-sm text-muted-foreground">{activeTestimonial.project}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-1 mb-4">
+                <span className="font-bold text-lg">{activeTestimonial.rating.toFixed(1)}</span>
+                <Star className="h-5 w-5 text-yellow-400" fill="#facc15" />
+              </div>
+              
+              <div className="mb-4 relative">
+                <Quote className="h-10 w-10 text-primary/10 absolute top-0 right-0" />
+                <p className="text-muted-foreground pt-8 pb-2 px-4">
+                  "{activeTestimonial.recommendation}"
+                </p>
+              </div>
+              
+              <div className="flex justify-between items-center border-t border-gray-100 pt-4 mt-4">
+                <div className="text-sm text-muted-foreground">
+                  {activeTestimonial.date}
+                </div>
+                <div className="text-sm">
+                  <span className="text-gray-600">דורג על ידי: </span>
+                  <span className="font-medium">{activeTestimonial.customer}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
