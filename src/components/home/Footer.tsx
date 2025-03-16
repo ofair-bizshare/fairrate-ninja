@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Facebook, Instagram } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
@@ -14,12 +15,9 @@ const Footer: React.FC = () => {
           </div>
           
           <div className="flex gap-16">
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-              תנאי שימוש
-            </a>
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-              מדיניות פרטיות
-            </a>
+            <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
+              תנאי שימוש ופרטיות
+            </Link>
             <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
               צור קשר
             </a>
