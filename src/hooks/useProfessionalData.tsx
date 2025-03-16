@@ -19,17 +19,27 @@ export const useProfessionalData = () => {
         // Handle query parameters like ?phone=1234567890
         const searchParams = new URLSearchParams(location.search);
         phoneNumber = searchParams.get('phone') || searchParams.get('id') || '';
+        
+        // If no explicit param found, try to get the first parameter value
         if (!phoneNumber) {
-          // Try to get the first parameter if not explicitly named
-          phoneNumber = location.search.substring(1).split('&')[0];
+          const firstParam = Array.from(searchParams.entries())[0];
+          if (firstParam) {
+            phoneNumber = firstParam[1];
+          }
         }
       }
       
-      // If not found in query params, try to get from pathname
+      // If not found in query params, try to get from pathname segments
       if (!phoneNumber && location.pathname) {
-        const pathParts = location.pathname.split('/');
-        if (pathParts.length > 1 && pathParts[1]) {
-          phoneNumber = pathParts[1];
+        const pathParts = location.pathname.split('/').filter(part => part);
+        if (pathParts.length > 0) {
+          // Try to find any segment that looks like a phone number (digits only or with + prefix)
+          for (const part of pathParts) {
+            if (/^\+?\d+$/.test(part)) {
+              phoneNumber = part;
+              break;
+            }
+          }
         }
       }
       
