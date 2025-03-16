@@ -8,73 +8,63 @@ export interface Professional {
   phone: string;
 }
 
+// Function to normalize phone numbers for comparison
+const normalizePhoneNumber = (phone: string): string => {
+  // Remove all non-digit characters
+  let normalized = phone.replace(/\D/g, '');
+  
+  // If it starts with 0, remove the leading 0
+  if (normalized.startsWith('0')) {
+    normalized = normalized.substring(1);
+  }
+  
+  // If it starts with 972, remove the 972
+  if (normalized.startsWith('972')) {
+    normalized = normalized.substring(3);
+  }
+  
+  return normalized;
+};
+
 export const getProfessionalByPhone = async (phone: string): Promise<Professional | null> => {
   try {
     console.log("Fetching professional with phone:", phone);
     
-    // Try exact match first
-    let { data, error } = await supabase
+    // Normalize the input phone number
+    const normalizedPhone = normalizePhoneNumber(phone);
+    console.log("Normalized phone:", normalizedPhone);
+    
+    // Get all professionals
+    const { data: allProfessionals, error } = await supabase
       .from('users_signup')
-      .select('first_name, last_name, company_name, phone')
-      .eq('phone', phone)
-      .maybeSingle();
+      .select('first_name, last_name, company_name, phone');
     
     if (error) {
-      console.error('Error fetching professional data:', error);
+      console.error('Error fetching professionals:', error);
       return null;
     }
     
-    // If no exact match, try phone number with or without country code
-    if (!data) {
-      console.log("No exact match found, trying alternative formats");
-      
-      // If phone number has country code (e.g., starts with +972 or 972), try without it
-      if (phone.startsWith("+972")) {
-        const phoneWithoutCode = phone.substring(4); // Remove +972
-        console.log("Trying without country code +972:", phoneWithoutCode);
-        
-        const { data: dataWithoutCode, error: errorWithoutCode } = await supabase
-          .from('users_signup')
-          .select('first_name, last_name, company_name, phone')
-          .eq('phone', phoneWithoutCode)
-          .maybeSingle();
-          
-        if (!errorWithoutCode && dataWithoutCode) {
-          data = dataWithoutCode;
-        }
-      } 
-      else if (phone.startsWith("972")) {
-        const phoneWithoutCode = phone.substring(3); // Remove 972
-        console.log("Trying without country code 972:", phoneWithoutCode);
-        
-        const { data: dataWithoutCode, error: errorWithoutCode } = await supabase
-          .from('users_signup')
-          .select('first_name, last_name, company_name, phone')
-          .eq('phone', phoneWithoutCode)
-          .maybeSingle();
-          
-        if (!errorWithoutCode && dataWithoutCode) {
-          data = dataWithoutCode;
-        }
-      }
-      // If phone doesn't have country code, try with it
-      else if (phone.length === 10 && phone.startsWith("0")) {
-        const phoneWithoutLeadingZero = phone.substring(1);
-        console.log("Trying with country code:", "972" + phoneWithoutLeadingZero);
-        
-        const { data: dataWithCode, error: errorWithCode } = await supabase
-          .from('users_signup')
-          .select('first_name, last_name, company_name, phone')
-          .eq('phone', "972" + phoneWithoutLeadingZero)
-          .maybeSingle();
-          
-        if (!errorWithCode && dataWithCode) {
-          data = dataWithCode;
-        }
-      }
+    if (!allProfessionals || allProfessionals.length === 0) {
+      console.log('No professionals found in the database');
+      return null;
     }
     
-    return data;
+    console.log(`Found ${allProfessionals.length} professionals in the database`);
+    
+    // Find a professional with a matching normalized phone number
+    const matchedProfessional = allProfessionals.find(prof => {
+      const normalizedProfPhone = normalizePhoneNumber(prof.phone);
+      console.log(`Comparing: ${normalizedProfPhone} with ${normalizedPhone}`);
+      return normalizedProfPhone === normalizedPhone;
+    });
+    
+    if (matchedProfessional) {
+      console.log('Found matching professional:', matchedProfessional);
+      return matchedProfessional;
+    }
+    
+    console.log('No matching professional found after normalization');
+    return null;
   } catch (error) {
     console.error('Failed to fetch professional:', error);
     return null;

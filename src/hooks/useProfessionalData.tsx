@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getProfessionalByPhone, Professional } from '@/services/supabaseService';
@@ -12,10 +11,15 @@ export const useProfessionalData = () => {
 
   useEffect(() => {
     const fetchProfessionalData = async () => {
+      // Don't fetch on the terms page
+      if (location.pathname === '/terms') {
+        return;
+      }
+      
       let phoneNumber = '';
       
       // Extract phone number from URL parameters
-      if (location.search && location.search.startsWith('?')) {
+      if (location.search) {
         // Handle query parameters like ?phone=1234567890
         const searchParams = new URLSearchParams(location.search);
         phoneNumber = searchParams.get('phone') || searchParams.get('id') || '';
@@ -40,11 +44,16 @@ export const useProfessionalData = () => {
               break;
             }
           }
+          
+          // If no phone-like segment found, just try the last segment
+          if (!phoneNumber && pathParts.length > 0) {
+            phoneNumber = pathParts[pathParts.length - 1];
+          }
         }
       }
       
-      // Clean up the phone number to only include digits
-      phoneNumber = phoneNumber.replace(/\D/g, '');
+      // Clean up the phone number - keep only digits and plus sign
+      phoneNumber = phoneNumber.replace(/[^\d+]/g, '');
       
       if (!phoneNumber) {
         console.log("No phone number found in URL");

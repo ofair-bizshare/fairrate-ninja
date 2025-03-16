@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Facebook, Instagram } from 'lucide-react';
+import { Facebook, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
@@ -18,9 +18,26 @@ const Footer: React.FC = () => {
             <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
               תנאי שימוש ופרטיות
             </Link>
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-              צור קשר
-            </a>
+            <div className="text-muted-foreground group relative">
+              <span className="cursor-pointer hover:text-primary transition-colors">צור קשר</span>
+              <div className="absolute bottom-full mb-2 right-0 bg-white shadow-lg rounded-lg p-4 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10">
+                <div className="flex flex-col gap-2 text-sm">
+                  <p className="font-bold">oFair</p>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-primary" />
+                    <span>קטיף, נתיבות</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-primary" />
+                    <a href="tel:0545308505" className="hover:text-primary">0545308505</a>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-primary" />
+                    <a href="mailto:info@ofair.co.il" className="hover:text-primary">info@ofair.co.il</a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         
