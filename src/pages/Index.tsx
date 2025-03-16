@@ -2,7 +2,7 @@
 import React, { useRef } from 'react';
 import Header from '@/components/home/Header';
 import Footer from '@/components/home/Footer';
-import RatingSystem from '@/components/RatingSystem';
+import RatingSystem from '@/components/rating';
 import PlatformBenefits from '@/components/PlatformBenefits';
 import Testimonials from '@/components/Testimonials';
 import PromotionBanner from '@/components/PromotionBanner';
