@@ -16,7 +16,7 @@ const Header: React.FC<HeaderProps> = ({ professional, scrollToRatingSection, sc
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentTitleIndex, setCurrentTitleIndex] = useState(0);
-  const [typingSpeed, setTypingSpeed] = useState(100);
+  const [typingSpeed, setTypingSpeed] = useState(50); // Faster initial typing speed
   const titles = ["לפלטפורמת מציאת אנשי המקצוע החדשנית של ישראל", "למערכת החדשנית למציאת בעל מקצוע - מעלים, משווים, מרוויחים"];
 
   useEffect(() => {
@@ -25,19 +25,19 @@ const Header: React.FC<HeaderProps> = ({ professional, scrollToRatingSection, sc
       if (!isDeleting) {
         setDisplayText(currentTitle.substring(0, displayText.length + 1));
         if (displayText.length === currentTitle.length) {
-          setTypingSpeed(3000);
+          setTypingSpeed(1500); // Shorter pause at the end before deleting
           setIsDeleting(true);
         } else {
-          setTypingSpeed(100);
+          setTypingSpeed(50); // Faster typing
         }
       } else {
         setDisplayText(currentTitle.substring(0, displayText.length - 1));
         if (displayText.length === 0) {
           setIsDeleting(false);
           setCurrentTitleIndex((currentTitleIndex + 1) % titles.length);
-          setTypingSpeed(500);
+          setTypingSpeed(200); // Faster delay before typing next sentence
         } else {
-          setTypingSpeed(50);
+          setTypingSpeed(25); // Faster deletion
         }
       }
     }, typingSpeed);

@@ -13,25 +13,45 @@ export const useProfessionalData = () => {
   useEffect(() => {
     const fetchProfessionalData = async () => {
       let phoneNumber = '';
+      
+      // Extract phone number from URL parameters
       if (location.search && location.search.startsWith('?')) {
-        phoneNumber = location.search.substring(1).split('&')[0];
+        // Handle query parameters like ?phone=1234567890
+        const searchParams = new URLSearchParams(location.search);
+        phoneNumber = searchParams.get('phone') || searchParams.get('id') || '';
+        if (!phoneNumber) {
+          // Try to get the first parameter if not explicitly named
+          phoneNumber = location.search.substring(1).split('&')[0];
+        }
       }
+      
+      // If not found in query params, try to get from pathname
       if (!phoneNumber && location.pathname) {
         const pathParts = location.pathname.split('/');
         if (pathParts.length > 1 && pathParts[1]) {
           phoneNumber = pathParts[1];
         }
       }
+      
+      // Clean up the phone number to only include digits
       phoneNumber = phoneNumber.replace(/\D/g, '');
-      if (!phoneNumber) return;
+      
+      if (!phoneNumber) {
+        console.log("No phone number found in URL");
+        return;
+      }
+      
       console.log("Extracted phone number:", phoneNumber);
       setIsLoading(true);
+      
       try {
         const professionalData = await getProfessionalByPhone(phoneNumber);
         console.log("Fetched professional data:", professionalData);
+        
         if (professionalData) {
           setProfessional(professionalData);
         } else {
+          console.log("No professional found with phone number:", phoneNumber);
           toast({
             title: "לא נמצא בעל מקצוע",
             description: "מספר הטלפון שהוזן לא נמצא במערכת",
@@ -49,6 +69,7 @@ export const useProfessionalData = () => {
         setIsLoading(false);
       }
     };
+    
     fetchProfessionalData();
   }, [location, toast]);
 
