@@ -9,7 +9,7 @@ import CriteriaList from './CriteriaList';
 import FinalScore from './FinalScore';
 
 interface RatingSystemProps {
-  onRatingChange: (ratings: { [key: string]: number }, weightedAverage: number, profName: string, recommendation?: string, customerName?: string, customerPhone?: string) => void;
+  onRatingChange: (ratings: { [key: string]: number }, weightedAverage: number, profName: string, recommendation?: string, customerName?: string, customerPhone?: string, profPhone?: string, companyName?: string) => void;
   professional?: Professional | null;
 }
 
@@ -163,7 +163,16 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
       return;
     }
     
-    onRatingChange(ratings, weightedAverage, profName, recommendation, customerName, customerPhone);
+    onRatingChange(
+      ratings, 
+      weightedAverage, 
+      profName, 
+      recommendation, 
+      customerName, 
+      customerPhone,
+      profPhone,
+      companyName
+    );
     
     resetForm();
   };

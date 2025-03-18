@@ -7,6 +7,7 @@ import PlatformBenefits from '@/components/PlatformBenefits';
 import Testimonials from '@/components/Testimonials';
 import PromotionBanner from '@/components/PromotionBanner';
 import SuccessDialog from '@/components/home/SuccessDialog';
+import PromotionWidget from '@/components/PromotionWidget';
 import { useProfessionalData } from '@/hooks/useProfessionalData';
 import { useRatingManagement } from '@/hooks/useRatingManagement';
 
@@ -47,6 +48,9 @@ const Index = () => {
         scrollToRatingSection={scrollToRatingSection} 
         scrollToBenefits={scrollToBenefits} 
       />
+
+      {/* Promotion Widget */}
+      <PromotionWidget onClick={scrollToPromotion} />
 
       <section id="rating-section" className="py-16 bg-white">
         <div className="container mx-auto px-4">

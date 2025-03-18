@@ -9,6 +9,63 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      professional_ratings: {
+        Row: {
+          company_name: string | null
+          created_at: string
+          customer_name: string
+          customer_phone: string
+          id: string
+          professional_name: string
+          professional_phone: string
+          rating_cleanliness: number
+          rating_communication: number
+          rating_overall: number
+          rating_quality: number
+          rating_recommendation: number
+          rating_timing: number
+          rating_value: number
+          recommendation: string | null
+          weighted_average: number
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string
+          customer_name: string
+          customer_phone: string
+          id?: string
+          professional_name: string
+          professional_phone: string
+          rating_cleanliness: number
+          rating_communication: number
+          rating_overall: number
+          rating_quality: number
+          rating_recommendation: number
+          rating_timing: number
+          rating_value: number
+          recommendation?: string | null
+          weighted_average: number
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string
+          customer_name?: string
+          customer_phone?: string
+          id?: string
+          professional_name?: string
+          professional_phone?: string
+          rating_cleanliness?: number
+          rating_communication?: number
+          rating_overall?: number
+          rating_quality?: number
+          rating_recommendation?: number
+          rating_timing?: number
+          rating_value?: number
+          recommendation?: string | null
+          weighted_average?: number
+        }
+        Relationships: []
+      }
       users_signup: {
         Row: {
           city: string
