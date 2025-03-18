@@ -267,7 +267,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
               
               <div className="mb-4 relative">
                 <Quote className="h-10 w-10 text-primary/10 absolute top-0 right-0" />
-                <p className="text-muted-foreground pt-8 pb-2 px-4">
+                <p className="text-muted-foreground pt-8 pb-2 px-4 text-right">
                   "{activeTestimonial.recommendation}"
                 </p>
               </div>

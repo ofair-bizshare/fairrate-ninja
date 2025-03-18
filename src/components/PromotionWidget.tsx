@@ -39,12 +39,13 @@ const PromotionWidget: React.FC<PromotionWidgetProps> = ({ onClick }) => {
     return (
       <div className="fixed bottom-4 right-4 z-20">
         <div 
-          className="flex items-center gap-1 bg-gradient-to-br from-primary to-blue-600 text-white p-2 rounded-lg shadow-lg cursor-pointer transition-transform hover:scale-105 active:scale-95"
+          className="flex flex-col items-center gap-1 bg-gradient-to-br from-primary to-blue-600 text-white p-2 rounded-lg shadow-lg cursor-pointer transition-transform hover:scale-105 active:scale-95"
           onClick={onClick}
         >
           <Gift className="h-4 w-4" />
           <div className="text-center text-xs font-medium">
             <p className="font-bold text-yellow-200">5% חזרה</p>
+            <p className="text-white text-[10px]">על העבודה הראשונה</p>
           </div>
         </div>
       </div>
