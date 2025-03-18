@@ -9,4 +9,7 @@ assistantFont.rel = 'stylesheet';
 assistantFont.href = 'https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap';
 document.head.appendChild(assistantFont);
 
+// Update document title
+document.title = 'ofair דירוג בעלי מקצוע';
+
 createRoot(document.getElementById("root")!).render(<App />);

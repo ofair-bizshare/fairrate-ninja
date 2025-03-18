@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Gift } from 'lucide-react';
 
 interface PromotionWidgetProps {
@@ -7,8 +7,34 @@ interface PromotionWidgetProps {
 }
 
 const PromotionWidget: React.FC<PromotionWidgetProps> = ({ onClick }) => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const promotionSection = document.getElementById('promotion-section');
+      if (promotionSection) {
+        const rect = promotionSection.getBoundingClientRect();
+        const isPromoSectionVisible = 
+          rect.top < window.innerHeight && rect.bottom >= 0;
+        
+        setIsVisible(!isPromoSectionVisible);
+      }
+    };
+
+    // Initial check
+    handleScroll();
+    
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll);
+    
+    // Cleanup
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  if (!isVisible) return null;
+
   return (
-    <div className="fixed left-4 top-1/2 transform -translate-y-1/2 z-20 hidden md:block">
+    <div className="fixed right-4 top-1/2 transform -translate-y-1/2 z-20 block">
       <div 
         className="flex flex-col items-center gap-2 bg-gradient-to-br from-primary to-blue-600 text-white p-3 rounded-lg shadow-lg cursor-pointer transition-transform hover:scale-105 active:scale-95"
         onClick={onClick}
