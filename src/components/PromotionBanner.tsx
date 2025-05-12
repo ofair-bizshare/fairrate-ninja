@@ -111,9 +111,7 @@ const PromotionBanner: React.FC = () => {
                 
                 <div className="flex items-start gap-2 mb-6 rtl">
                   <input type="checkbox" id="terms" checked={isChecked} onChange={() => setIsChecked(!isChecked)} className="mt-1" />
-                  <label htmlFor="terms" className="text-sm text-muted-foreground">
-                    אני מעוניין/ת לקבל עדכונים על השקת המערכת ומבצעים שווים
-                  </label>
+                  <label htmlFor="terms" className="text-sm text-muted-foreground">אני מעוניין/ת לקבל עדכונים על השקת המערכת קבלת ההטבה מבצעים שווים</label>
                 </div>
                 
                 <button type="submit" className="ofair-button w-full rtl">
