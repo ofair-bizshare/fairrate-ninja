@@ -53,10 +53,10 @@ export const getProfessionalByPhone = async (phone: string): Promise<Professiona
     const normalizedPhone = normalizePhoneNumber(phone);
     console.log("Normalized phone:", normalizedPhone);
     
-    // Get all professionals from the correct table (professionals)
+    // Get all professionals from the correct table using the actual column names
     const { data: allProfessionals, error } = await supabase
       .from('professionals')
-      .select('first_name, last_name, company_name, phone_number');
+      .select('name, company_name, phone_number');
     
     if (error) {
       console.error('Error fetching professionals:', error);
@@ -72,7 +72,6 @@ export const getProfessionalByPhone = async (phone: string): Promise<Professiona
     
     // Find a professional with a matching normalized phone number
     const matchedProfessional = allProfessionals.find(prof => {
-      // Use phone_number field instead of phone since that's what the professionals table has
       const normalizedProfPhone = prof.phone_number ? normalizePhoneNumber(prof.phone_number) : '';
       console.log(`Comparing: ${normalizedProfPhone} with ${normalizedPhone}`);
       return normalizedProfPhone === normalizedPhone;
@@ -80,10 +79,14 @@ export const getProfessionalByPhone = async (phone: string): Promise<Professiona
     
     if (matchedProfessional) {
       console.log('Found matching professional:', matchedProfessional);
-      // Convert to the expected Professional interface
+      // Convert to the expected Professional interface by splitting the name
+      const nameParts = (matchedProfessional.name || '').split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+      
       return {
-        first_name: matchedProfessional.first_name || '',
-        last_name: matchedProfessional.last_name || '',
+        first_name: firstName,
+        last_name: lastName,
         company_name: matchedProfessional.company_name,
         phone: matchedProfessional.phone_number || ''
       };
