@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { Star, Quote, ThumbsUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -83,20 +82,29 @@ const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
         const ratings = await getLatestRatings(3);
         
         if (ratings && ratings.length > 0) {
-          const formattedRatings: RatedProfessional[] = ratings.map(rating => ({
-            id: rating.id || Date.now(),
-            profName: rating.professional_name,
-            project: "עבודה מקצועית",
-            rating: rating.weighted_average,
-            recommendation: rating.recommendation || "",
-            customer: rating.customer_name,
-            date: formatTimeAgo(rating.created_at || new Date().toISOString())
-          }));
+          // Filter ratings to ensure they have recommendations
+          const ratingsWithRecommendations = ratings.filter(rating => 
+            rating.recommendation && rating.recommendation.trim() !== ''
+          );
           
-          setRatedProfessionals(formattedRatings);
+          if (ratingsWithRecommendations.length > 0) {
+            const formattedRatings: RatedProfessional[] = ratingsWithRecommendations.map(rating => ({
+              id: rating.id || Date.now(),
+              profName: rating.professional_name,
+              project: "עבודה מקצועית",
+              rating: rating.weighted_average,
+              recommendation: rating.recommendation || "",
+              customer: rating.customer_name,
+              date: formatTimeAgo(rating.created_at || new Date().toISOString())
+            }));
+            
+            setRatedProfessionals(formattedRatings);
+          }
+          // If no ratings with recommendations, keep the initial sample data
         }
       } catch (error) {
         console.error('Error fetching ratings:', error);
+        // On error, keep the initial sample data
       } finally {
         setIsLoading(false);
       }

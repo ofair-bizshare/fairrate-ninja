@@ -116,6 +116,8 @@ export const getLatestRatings = async (limit: number = 3): Promise<Rating[]> => 
     const { data, error } = await supabase
       .from('professional_ratings')
       .select('*')
+      .not('recommendation', 'is', null)
+      .neq('recommendation', '')
       .order('created_at', { ascending: false })
       .limit(limit);
     
