@@ -53,10 +53,10 @@ export const getProfessionalByPhone = async (phone: string): Promise<Professiona
     const normalizedPhone = normalizePhoneNumber(phone);
     console.log("Normalized phone:", normalizedPhone);
     
-    // Get all professionals
+    // Get all professionals from the correct table (professionals)
     const { data: allProfessionals, error } = await supabase
-      .from('users_signup')
-      .select('first_name, last_name, company_name, phone');
+      .from('professionals')
+      .select('first_name, last_name, company_name, phone_number');
     
     if (error) {
       console.error('Error fetching professionals:', error);
@@ -72,14 +72,21 @@ export const getProfessionalByPhone = async (phone: string): Promise<Professiona
     
     // Find a professional with a matching normalized phone number
     const matchedProfessional = allProfessionals.find(prof => {
-      const normalizedProfPhone = normalizePhoneNumber(prof.phone);
+      // Use phone_number field instead of phone since that's what the professionals table has
+      const normalizedProfPhone = prof.phone_number ? normalizePhoneNumber(prof.phone_number) : '';
       console.log(`Comparing: ${normalizedProfPhone} with ${normalizedPhone}`);
       return normalizedProfPhone === normalizedPhone;
     });
     
     if (matchedProfessional) {
       console.log('Found matching professional:', matchedProfessional);
-      return matchedProfessional;
+      // Convert to the expected Professional interface
+      return {
+        first_name: matchedProfessional.first_name || '',
+        last_name: matchedProfessional.last_name || '',
+        company_name: matchedProfessional.company_name,
+        phone: matchedProfessional.phone_number || ''
+      };
     }
     
     console.log('No matching professional found after normalization');
