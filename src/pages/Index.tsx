@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 import Header from '@/components/home/Header';
 import Footer from '@/components/home/Footer';
@@ -10,57 +9,45 @@ import SuccessDialog from '@/components/home/SuccessDialog';
 import PromotionWidget from '@/components/PromotionWidget';
 import { useProfessionalData } from '@/hooks/useProfessionalData';
 import { useRatingManagement } from '@/hooks/useRatingManagement';
-
 const Index = () => {
-  const { professional, isLoading } = useProfessionalData();
-  const { 
-    showSubmitSuccess, 
-    newRecommendation, 
-    handleRatingChange, 
-    closeSuccessPopup 
+  const {
+    professional,
+    isLoading
+  } = useProfessionalData();
+  const {
+    showSubmitSuccess,
+    newRecommendation,
+    handleRatingChange,
+    closeSuccessPopup
   } = useRatingManagement();
-  
   const promotionSectionRef = useRef<HTMLDivElement>(null);
-
   const scrollToPromotion = () => {
     document.getElementById('promotion-section')?.scrollIntoView({
       behavior: 'smooth'
     });
   };
-
   const scrollToBenefits = () => {
     document.getElementById('benefits-section')?.scrollIntoView({
       behavior: 'smooth'
     });
     closeSuccessPopup();
   };
-
   const scrollToRatingSection = () => {
     document.getElementById('rating-section')?.scrollIntoView({
       behavior: 'smooth'
     });
   };
-
-  return (
-    <div dir="rtl" className="min-h-screen flex flex-col bg-background">
-      <Header 
-        professional={professional} 
-        scrollToRatingSection={scrollToRatingSection} 
-        scrollToBenefits={scrollToBenefits} 
-      />
+  return <div dir="rtl" className="min-h-screen flex flex-col bg-background">
+      <Header professional={professional} scrollToRatingSection={scrollToRatingSection} scrollToBenefits={scrollToBenefits} />
 
       {/* Promotion Widget */}
       <PromotionWidget onClick={scrollToPromotion} />
 
-      <section id="rating-section" className="py-16 bg-white">
+      <section id="rating-section" className="bg-white py-0">
         <div className="container mx-auto px-4">
-          {isLoading ? (
-            <div className="flex justify-center items-center p-12">
+          {isLoading ? <div className="flex justify-center items-center p-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-            </div>
-          ) : (
-            <RatingSystem onRatingChange={handleRatingChange} professional={professional} />
-          )}
+            </div> : <RatingSystem onRatingChange={handleRatingChange} professional={professional} />}
         </div>
       </section>
       
@@ -76,14 +63,7 @@ const Index = () => {
 
       <Footer />
 
-      {showSubmitSuccess && (
-        <SuccessDialog 
-          onClose={closeSuccessPopup} 
-          onLearnMore={scrollToBenefits} 
-        />
-      )}
-    </div>
-  );
+      {showSubmitSuccess && <SuccessDialog onClose={closeSuccessPopup} onLearnMore={scrollToBenefits} />}
+    </div>;
 };
-
 export default Index;

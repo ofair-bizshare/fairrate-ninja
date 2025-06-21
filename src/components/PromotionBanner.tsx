@@ -78,7 +78,7 @@ const PromotionBanner: React.FC = () => {
     setIsChecked(false);
     setErrors({});
   };
-  return <div className="w-full py-12 bg-gradient-to-t from-blue-50/50 to-background">
+  return <div className="w-full bg-gradient-to-t from-blue-50/50 to-background py-0">
       <div className="container mx-auto px-4">
         <div className="ofair-card max-w-3xl mx-auto relative overflow-hidden">
           <div className="absolute top-0 left-0 h-20 w-20 bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>

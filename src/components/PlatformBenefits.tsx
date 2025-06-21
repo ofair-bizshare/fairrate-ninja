@@ -1,42 +1,35 @@
-
 import React, { useRef, useEffect } from 'react';
 import { Search, MessageSquare, CheckCircle, Clock, PiggyBank, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
 const PlatformBenefits: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in-view');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.2 }
-    );
-
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.2
+    });
     const sections = document.querySelectorAll('.section-transition');
-    sections.forEach((section) => {
+    sections.forEach(section => {
       observer.observe(section);
     });
-
     return () => {
-      sections.forEach((section) => {
+      sections.forEach(section => {
         observer.unobserve(section);
       });
     };
   }, []);
-
   const scrollToPromotion = () => {
-    document.getElementById('promotion-section')?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('promotion-section')?.scrollIntoView({
+      behavior: 'smooth'
+    });
   };
-
-  return (
-    <div ref={sectionRef} className="w-full py-16">
+  return <div ref={sectionRef} className="w-full py-0">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <div className="ofair-chip mb-2">oFair</div>
@@ -114,16 +107,11 @@ const PlatformBenefits: React.FC = () => {
         </div>
         
         <div className="mt-12 flex justify-center">
-          <button 
-            className="ofair-button rtl"
-            onClick={scrollToPromotion}
-          >
+          <button className="ofair-button rtl" onClick={scrollToPromotion}>
             נסו את oFair עכשיו – זה בחינם!
           </button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default PlatformBenefits;

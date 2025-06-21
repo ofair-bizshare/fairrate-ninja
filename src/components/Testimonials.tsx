@@ -3,7 +3,6 @@ import { Star, Quote, ThumbsUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogClose } from '@/components/ui/dialog';
 import { getLatestRatings, Rating } from '@/services/supabaseService';
-
 interface RatedProfessional {
   id: string | number;
   profName: string;
@@ -15,42 +14,36 @@ interface RatedProfessional {
 }
 
 // Initial sample data (will be shown until real data is loaded)
-const initialRatedProfessionals: RatedProfessional[] = [
-  {
-    id: 1,
-    profName: "משה הנגר",
-    project: "עבודות נגרות",
-    rating: 4.8,
-    recommendation: "משה ביצע עבודה מצוינת, הגיע בזמן והיה מקצועי מאוד. אני ממליץ עליו בחום לכל מי שמחפש נגר איכותי.",
-    customer: "ישראל ישראלי",
-    date: "לפני חודש"
-  },
-  {
-    id: 2,
-    profName: "יוסי החשמלאי",
-    project: "התקנת מערכת חשמל",
-    rating: 4.7,
-    recommendation: "יוסי הגיע מהר, פתר את הבעיה ביעילות והמחיר היה הוגן. שירות מעולה!",
-    customer: "רונית לוי",
-    date: "לפני 3 שבועות"
-  },
-  {
-    id: 3,
-    profName: "אבי השרברב",
-    project: "תיקון נזילה",
-    rating: 4.9,
-    recommendation: "אבי הגיע תוך שעה, איתר את הנזילה המורכבת ותיקן אותה במהירות. מקצועי, אדיב ואמין.",
-    customer: "דוד כהן",
-    date: "לפני שבועיים"
-  }
-];
-
+const initialRatedProfessionals: RatedProfessional[] = [{
+  id: 1,
+  profName: "משה הנגר",
+  project: "עבודות נגרות",
+  rating: 4.8,
+  recommendation: "משה ביצע עבודה מצוינת, הגיע בזמן והיה מקצועי מאוד. אני ממליץ עליו בחום לכל מי שמחפש נגר איכותי.",
+  customer: "ישראל ישראלי",
+  date: "לפני חודש"
+}, {
+  id: 2,
+  profName: "יוסי החשמלאי",
+  project: "התקנת מערכת חשמל",
+  rating: 4.7,
+  recommendation: "יוסי הגיע מהר, פתר את הבעיה ביעילות והמחיר היה הוגן. שירות מעולה!",
+  customer: "רונית לוי",
+  date: "לפני 3 שבועות"
+}, {
+  id: 3,
+  profName: "אבי השרברב",
+  project: "תיקון נזילה",
+  rating: 4.9,
+  recommendation: "אבי הגיע תוך שעה, איתר את הנזילה המורכבת ותיקן אותה במהירות. מקצועי, אדיב ואמין.",
+  customer: "דוד כהן",
+  date: "לפני שבועיים"
+}];
 const formatTimeAgo = (dateString: string): string => {
   const date = new Date(dateString);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  
   if (diffDays === 0) return "היום";
   if (diffDays === 1) return "אתמול";
   if (diffDays < 7) return `לפני ${diffDays} ימים`;
@@ -58,7 +51,6 @@ const formatTimeAgo = (dateString: string): string => {
   if (diffDays < 365) return `לפני ${Math.floor(diffDays / 30)} חודשים`;
   return `לפני ${Math.floor(diffDays / 365)} שנים`;
 };
-
 interface TestimonialsProps {
   newRecommendation?: {
     profName: string;
@@ -67,26 +59,23 @@ interface TestimonialsProps {
     customer: string;
   };
 }
-
-const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
+const Testimonials: React.FC<TestimonialsProps> = ({
+  newRecommendation
+}) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [ratedProfessionals, setRatedProfessionals] = useState<RatedProfessional[]>(initialRatedProfessionals);
   const [activeTestimonial, setActiveTestimonial] = useState<RatedProfessional | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Fetch ratings from Supabase
   useEffect(() => {
     const fetchRatings = async () => {
       try {
         setIsLoading(true);
         const ratings = await getLatestRatings(3);
-        
         if (ratings && ratings.length > 0) {
           // Filter ratings to ensure they have recommendations
-          const ratingsWithRecommendations = ratings.filter(rating => 
-            rating.recommendation && rating.recommendation.trim() !== ''
-          );
-          
+          const ratingsWithRecommendations = ratings.filter(rating => rating.recommendation && rating.recommendation.trim() !== '');
           if (ratingsWithRecommendations.length > 0) {
             const formattedRatings: RatedProfessional[] = ratingsWithRecommendations.map(rating => ({
               id: rating.id || Date.now(),
@@ -97,7 +86,6 @@ const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
               customer: rating.customer_name,
               date: formatTimeAgo(rating.created_at || new Date().toISOString())
             }));
-            
             setRatedProfessionals(formattedRatings);
           }
           // If no ratings with recommendations, keep the initial sample data
@@ -109,15 +97,15 @@ const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
         setIsLoading(false);
       }
     };
-    
     fetchRatings();
   }, []);
-  
+
   // Add new recommendation if it exists and has a high rating
   useEffect(() => {
     if (newRecommendation && newRecommendation.rating >= 4.2 && newRecommendation.recommendation) {
       const newProfessional: RatedProfessional = {
-        id: Date.now(), // Use timestamp as a unique ID
+        id: Date.now(),
+        // Use timestamp as a unique ID
         profName: newRecommendation.profName,
         project: "עבודה מקצועית",
         rating: newRecommendation.rating,
@@ -125,7 +113,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
         customer: newRecommendation.customer,
         date: "עכשיו"
       };
-      
+
       // Replace the first testimonial to maintain the same number of visible testimonials
       setRatedProfessionals(prev => {
         const updated = [...prev];
@@ -135,41 +123,33 @@ const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
       });
     }
   }, [newRecommendation]);
-  
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in-view');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.2 }
-    );
-
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.2
+    });
     if (sectionRef.current) {
       observer.observe(sectionRef.current);
     }
-
     return () => {
       if (sectionRef.current) {
         observer.unobserve(sectionRef.current);
       }
     };
   }, []);
-
   const openTestimonialDialog = (professional: RatedProfessional) => {
     setActiveTestimonial(professional);
   };
-
   const closeTestimonialDialog = () => {
     setActiveTestimonial(null);
   };
-
-  return (
-    <div className="w-full py-16 bg-gradient-to-b from-background to-blue-50/30">
+  return <div className="w-full bg-gradient-to-b from-background to-blue-50/30 mx-0 py-0">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <div className="ofair-chip mb-2">בעלי מקצוע מומלצים</div>
@@ -180,14 +160,10 @@ const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
           </p>
         </div>
 
-        <div 
-          ref={sectionRef}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 section-transition"
-        >
-          {isLoading ? (
-            // Loading skeletons
-            Array(3).fill(0).map((_, index) => (
-              <div key={`skeleton-${index}`} className="ofair-card h-full flex flex-col relative animate-pulse">
+        <div ref={sectionRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 section-transition">
+          {isLoading ?
+        // Loading skeletons
+        Array(3).fill(0).map((_, index) => <div key={`skeleton-${index}`} className="ofair-card h-full flex flex-col relative animate-pulse">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="h-10 w-10 rounded-full bg-gray-200"></div>
                   <div className="flex-1">
@@ -205,19 +181,9 @@ const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
                   <div className="h-3 bg-gray-200 rounded w-1/4"></div>
                   <div className="h-3 bg-gray-200 rounded w-1/3"></div>
                 </div>
-              </div>
-            ))
-          ) : (
-            ratedProfessionals.map((professional, index) => (
-              <div 
-                key={professional.id} 
-                className={cn(
-                  "ofair-card h-full flex flex-col relative",
-                  "hover:translate-y-[-5px] cursor-pointer"
-                )}
-                style={{ transitionDelay: `${index * 100}ms` }}
-                onClick={() => openTestimonialDialog(professional)}
-              >
+              </div>) : ratedProfessionals.map((professional, index) => <div key={professional.id} className={cn("ofair-card h-full flex flex-col relative", "hover:translate-y-[-5px] cursor-pointer")} style={{
+          transitionDelay: `${index * 100}ms`
+        }} onClick={() => openTestimonialDialog(professional)}>
                 <Quote className="h-8 w-8 text-primary/20 absolute top-4 right-4" />
                 
                 <div className="flex items-center gap-2 mb-2">
@@ -248,16 +214,13 @@ const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
                     <span className="font-medium">{professional.customer}</span>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
+              </div>)}
         </div>
       </div>
 
-      <Dialog open={!!activeTestimonial} onOpenChange={(open) => !open && closeTestimonialDialog()}>
+      <Dialog open={!!activeTestimonial} onOpenChange={open => !open && closeTestimonialDialog()}>
         <DialogContent className="max-w-lg rtl">
-          {activeTestimonial && (
-            <div className="pt-6">
+          {activeTestimonial && <div className="pt-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-xl">
                   {activeTestimonial.profName.charAt(0)}
@@ -289,12 +252,9 @@ const Testimonials: React.FC<TestimonialsProps> = ({ newRecommendation }) => {
                   <span className="font-medium">{activeTestimonial.customer}</span>
                 </div>
               </div>
-            </div>
-          )}
+            </div>}
         </DialogContent>
       </Dialog>
-    </div>
-  );
+    </div>;
 };
-
 export default Testimonials;

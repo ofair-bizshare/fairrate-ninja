@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-
 interface HeaderProps {
   professional: {
     first_name?: string;
@@ -11,14 +9,16 @@ interface HeaderProps {
   scrollToRatingSection: () => void;
   scrollToBenefits: () => void;
 }
-
-const Header: React.FC<HeaderProps> = ({ professional, scrollToRatingSection, scrollToBenefits }) => {
+const Header: React.FC<HeaderProps> = ({
+  professional,
+  scrollToRatingSection,
+  scrollToBenefits
+}) => {
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentTitleIndex, setCurrentTitleIndex] = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(50); // Faster initial typing speed
   const titles = ["לפלטפורמת מציאת אנשי המקצוע החדשנית של ישראל", "למערכת החדשנית למציאת בעל מקצוע - מעלים, משווים, מרוויחים"];
-
   useEffect(() => {
     const currentTitle = titles[currentTitleIndex];
     const timer = setTimeout(() => {
@@ -43,9 +43,7 @@ const Header: React.FC<HeaderProps> = ({ professional, scrollToRatingSection, sc
     }, typingSpeed);
     return () => clearTimeout(timer);
   }, [displayText, currentTitleIndex, isDeleting, typingSpeed, titles]);
-
-  return (
-    <header className="relative w-full min-h-[80vh] flex flex-col justify-center pt-20 pb-16 overflow-hidden">
+  return <header className="relative w-full min-h-[80vh] flex flex-col justify-center pt-20 pb-16 overflow-hidden py-0">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-40 h-40 bg-blue-100 rounded-full opacity-50 blur-2xl"></div>
         <div className="absolute bottom-0 right-0 w-60 h-60 bg-blue-200 rounded-full opacity-40 blur-3xl"></div>
@@ -84,8 +82,6 @@ const Header: React.FC<HeaderProps> = ({ professional, scrollToRatingSection, sc
           </div>
         </div>
       </div>
-    </header>
-  );
+    </header>;
 };
-
 export default Header;
