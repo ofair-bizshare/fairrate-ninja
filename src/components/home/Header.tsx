@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import ofairLogo from '@/assets/ofair-logo.png';
 interface HeaderProps {
   professional: {
     first_name?: string;
@@ -54,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({
         <div className="text-center animate-fade-in">
           <div className="flex justify-center mb-">
             <div className="rounded-full border-4 border-primary p-0 shadow-lg transform hover:scale-105 transition-all duration-300">
-              <img src="/lovable-uploads/00f51801-ae0f-45ec-bf78-c1903df9abee.png" alt="oFair Logo" className="h-56 w-56 object-contain rounded-full" />
+              <img src={ofairLogo} alt="oFair Logo" className="h-56 w-56 object-contain rounded-full" />
             </div>
           </div>
           
