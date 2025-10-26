@@ -2,6 +2,7 @@
 import React from 'react';
 import { Facebook, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ofairLogo from '@/assets/ofair-logo.png';
 
 const Footer: React.FC = () => {
   return (
@@ -10,7 +11,7 @@ const Footer: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-center mb-12">
           <div className="mb-6 md:mb-0">
             <div className="rounded-full border-4 border-primary p-2">
-              <img src="/lovable-uploads/00f51801-ae0f-45ec-bf78-c1903df9abee.png" alt="oFair Logo" className="h-24 w-24 object-contain rounded-full" />
+              <img src={ofairLogo} alt="oFair Logo" className="h-24 w-24 object-contain rounded-full" />
             </div>
           </div>
           
