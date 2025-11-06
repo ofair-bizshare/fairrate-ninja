@@ -19,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentTitleIndex, setCurrentTitleIndex] = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(50); // Faster initial typing speed
-  const titles = ["לפלטפורמת מציאת אנשי המקצוע החדשנית של ישראל", "למערכת החדשנית למציאת בעל מקצוע - מעלים, משווים, מרוויחים"];
+  const titles = ["לפלטפורמת מציאת אנשי השירות החדשנית של ישראל", "למערכת החדשנית למציאת נותן שירות - מעלים, משווים, מרוויחים"];
   useEffect(() => {
     const currentTitle = titles[currentTitleIndex];
     const timer = setTimeout(() => {
@@ -61,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({
           
           <h1 className="text-2xl md:text-3xl lg:text-4xl mb-6 max-w-4xl mx-auto leading-tight font-extrabold">
             {professional ? `דרגו את ${professional.first_name} ${professional.last_name} ${professional.company_name ? `מחברת ${professional.company_name}` : ''}` : <>
-                  דרגו את בעל המקצוע שלכם ועזרו לו להכנס{" "}
+                  דרגו את נותן השירות שלכם ועזרו לו להכנס{" "}
                   <span className={cn("transition-all duration-500 inline-block min-h-[40px]", currentTitleIndex === 1 ? "text-[#70EACD] font-extrabold" : "")}>
                     {displayText}
                     <span className="animate-pulse">|</span>
@@ -69,8 +69,8 @@ const Header: React.FC<HeaderProps> = ({
                 </>}
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            בעזרת הדירוגים שלכם, אנחנו יוצרים קהילה של בעלי מקצוע אמינים ומדויקים יותר.
-            עופר היא פלטפורמה שנועדה לעזור לצרכנים לקבל אנשי מקצוע איכותיים להשוות מחירים ולקבל זמינות באופן מהיר ונוח.
+            בעזרת הדירוגים שלכם, אנחנו יוצרים קהילה של נותני שירות אמינים ומדויקים יותר.
+            עופר היא פלטפורמה שנועדה לעזור לצרכנים לקבל נותני שירות איכותיים להשוות מחירים ולקבל זמינות באופן מהיר ונוח.
           </p>
           
           <div className="flex flex-col md:flex-row justify-center gap-4 mb-12">

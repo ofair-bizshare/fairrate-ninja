@@ -21,7 +21,7 @@ const SuccessDialog: React.FC<SuccessDialogProps> = ({ onClose, onLearnMore }) =
           </div>
           <h3 className="text-xl font-bold rtl">תודה על הדירוג!</h3>
           <p className="text-muted-foreground mt-2 rtl">
-            הדירוג שלך יעזור לאחרים למצוא בעלי מקצוע איכותיים
+            הדירוג שלך יעזור לאחרים למצוא נותני שירות איכותיים
           </p>
         </div>
         

@@ -22,10 +22,10 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
 }) => {
   return (
     <div className="mb-6">
-      <h3 className="text-lg font-medium mb-3 rtl">פרטי בעל המקצוע</h3>
+      <h3 className="text-lg font-medium mb-3 rtl">פרטי נותן השירות</h3>
       
       <div className="mb-4">
-        <label htmlFor="profName" className="block text-sm font-medium text-gray-700 mb-1 rtl">שם בעל המקצוע*</label>
+        <label htmlFor="profName" className="block text-sm font-medium text-gray-700 mb-1 rtl">שם נותן השירות*</label>
         <input
           type="text"
           id="profName"
@@ -36,12 +36,12 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
             errors.profName ? "border-red-500 bg-red-50" : "border-gray-300",
             professional ? "bg-gray-100" : ""
           )}
-          placeholder="הזינו את שם בעל המקצוע"
+          placeholder="הזינו את שם נותן השירות"
           readOnly={!!professional}
           required
         />
         {errors.profName && (
-          <p className="text-red-500 text-sm mt-1 rtl">נא להזין את שם בעל המקצוע</p>
+          <p className="text-red-500 text-sm mt-1 rtl">נא להזין את שם נותן השירות</p>
         )}
       </div>
 

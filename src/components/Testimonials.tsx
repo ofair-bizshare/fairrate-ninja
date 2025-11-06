@@ -152,11 +152,11 @@ const Testimonials: React.FC<TestimonialsProps> = ({
   return <div className="w-full bg-gradient-to-b from-background to-blue-50/30 mx-0 py-0">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <div className="ofair-chip mb-2">בעלי מקצוע מומלצים</div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 rtl">לקוחות שכבר דירגו את בעל המקצוע שלהם ואיפשרו לו להכנס לעופר</h2>
+          <div className="ofair-chip mb-2">נותני שירות מומלצים</div>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 rtl">לקוחות שכבר דירגו את נותן השירות שלהם ואיפשרו לו להכנס לעופר</h2>
           <div className="h-divider"></div>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto rtl">
-            בעלי מקצוע שקיבלו ציון מעל 4.2 מופיעים כאן ונהנים מפלטפורמת oFair
+            נותני שירות שקיבלו ציון מעל 4.2 מופיעים כאן ונהנים מפלטפורמת oFair
           </p>
         </div>
 

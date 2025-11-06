@@ -179,7 +179,7 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
 
   return (
     <div className="w-full max-w-2xl mx-auto ofair-card">
-      <h2 className="text-2xl font-bold text-center mb-6 rtl">דרגו את בעל המקצוע</h2>
+      <h2 className="text-2xl font-bold text-center mb-6 rtl">דרגו את נותן השירות</h2>
       
       <CustomerDetails
         customerName={customerName}
@@ -212,7 +212,7 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
           value={recommendation}
           onChange={(e) => setRecommendation(e.target.value)}
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl h-32 resize-none"
-          placeholder="ספרו לנו על החוויה שלכם עם בעל המקצוע"
+          placeholder="ספרו לנו על החוויה שלכם עם נותן השירות"
         />
       </div>
 

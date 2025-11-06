@@ -72,7 +72,7 @@ export const useProfessionalData = () => {
         } else {
           console.log("No professional found with phone number:", phoneNumber);
           toast({
-            title: "לא נמצא בעל מקצוע",
+            title: "לא נמצא נותן שירות",
             description: "מספר הטלפון שהוזן לא נמצא במערכת",
             variant: "destructive"
           });
@@ -81,7 +81,7 @@ export const useProfessionalData = () => {
         console.error("Error fetching professional data:", error);
         toast({
           title: "שגיאה בטעינת נתונים",
-          description: "אירעה שגיאה בעת טעינת נתוני בעל המקצוע",
+          description: "אירעה שגיאה בעת טעינת נתוני נותן השירות",
           variant: "destructive"
         });
       } finally {

@@ -10,6 +10,6 @@ assistantFont.href = 'https://fonts.googleapis.com/css2?family=Assistant:wght@20
 document.head.appendChild(assistantFont);
 
 // Update document title
-document.title = 'ofair דירוג בעלי מקצוע';
+document.title = 'ofair דירוג נותני שירות';
 
 createRoot(document.getElementById("root")!).render(<App />);

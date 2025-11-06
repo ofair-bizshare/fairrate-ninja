@@ -33,10 +33,10 @@ const PlatformBenefits: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <div className="ofair-chip mb-2">oFair</div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 rtl">מצאו בעלי מקצוע בצורה חכמה ומשתלמת</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 rtl">מצאו נותני שירות בצורה חכמה ומשתלמת</h2>
           <div className="h-divider"></div>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto rtl">
-            ב-oFair יש לכם שתי אפשרויות למציאת בעל מקצוע בצורה המשתלמת והחכמה ביותר
+            ב-oFair יש לכם שתי אפשרויות למציאת נותן שירות בצורה המשתלמת והחכמה ביותר
           </p>
         </div>
 
@@ -69,7 +69,7 @@ const PlatformBenefits: React.FC = () => {
                 
                 <div className="flex items-start gap-3 rtl">
                   <Clock className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                  <p className="text-sm">למצוא את בעל המקצוע האמין והמקצועי ביותר במהירות</p>
+                  <p className="text-sm">למצוא את נותן השירות האמין והמקצועי ביותר במהירות</p>
                 </div>
               </div>
             </div>
@@ -81,15 +81,15 @@ const PlatformBenefits: React.FC = () => {
               <div className="bg-primary/5 p-4 rounded-xl mb-6 inline-flex">
                 <Search className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-2xl font-bold mb-3 rtl">🔎 אפשרות 2: בחירת בעל מקצוע ישירות</h3>
+              <h3 className="text-2xl font-bold mb-3 rtl">🔎 אפשרות 2: בחירת נותן שירות ישירות</h3>
               <p className="text-muted-foreground mb-6 rtl">
-                פשוט חפשו איש מקצוע לפי תחום ועיר, עיינו בפרופילים ובדירוגים, ובחרו את האיש המתאים לכם ביותר!
+                פשוט חפשו נותן שירות לפי תחום ועיר, עיינו בפרופילים ובדירוגים, ובחרו את האיש המתאים לכם ביותר!
               </p>
               
               <div className="mt-auto space-y-4">
                 <div className="flex items-start gap-3 rtl">
                   <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                  <p className="text-sm">כל בעלי המקצוע מדורגים ומבוקרים על ידי לקוחות אמתיים</p>
+                  <p className="text-sm">כל נותני השירות מדורגים ומבוקרים על ידי לקוחות אמתיים</p>
                 </div>
                 
                 <div className="flex items-start gap-3 rtl">
