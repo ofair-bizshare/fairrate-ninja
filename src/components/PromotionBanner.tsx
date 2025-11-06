@@ -90,7 +90,7 @@ const PromotionBanner: React.FC = () => {
               <h3 className="text-xl font-bold rtl">הטבת השקה מיוחדת!</h3>
             </div>
             
-            <h2 className="text-2xl md:text-3xl font-bold text-center mb-4 rtl">5% חזרה על הזמנת העבודה הראשונה שלכם דרך oFair!</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-4 rtl">50 שקל חזרה על הזמנת העבודה הראשונה שלכם דרך oFair!</h2>
             
             <p className="text-center text-muted-foreground mb-8 rtl max-w-xl mx-auto">
               השאירו את הפרטים שלכם ונעדכן אתכם ברגע שהמערכת תהיה זמינה. תוכלו להנות מההטבה ולחסוך בעבודה הראשונה שלכם!
@@ -119,7 +119,7 @@ const PromotionBanner: React.FC = () => {
                 </button>
                 
                 <p className="text-xs text-muted-foreground mt-3 rtl text-center">
-                  * 5% חזרה לעבודה הבאה שלכם דרכנו ישמרו בחשבונכם
+                  * 50 שקל חזרה לעבודה הבאה שלכם דרכנו ישמרו בחשבונכם
                 </p>
               </form> : <div className="text-center py-4 relative">
                 <button onClick={resetForm} className="absolute top-0 right-0 p-2 text-gray-500 hover:text-gray-700" type="button">

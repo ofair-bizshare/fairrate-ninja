@@ -44,7 +44,7 @@ const PromotionWidget: React.FC<PromotionWidgetProps> = ({ onClick }) => {
         >
           <Gift className="h-4 w-4" />
           <div className="text-center text-xs font-medium">
-            <p className="font-bold text-yellow-200">5% חזרה</p>
+            <p className="font-bold text-yellow-200">50 ₪ חזרה</p>
             <p className="text-white text-[10px]">על העבודה הראשונה</p>
           </div>
         </div>
@@ -61,7 +61,7 @@ const PromotionWidget: React.FC<PromotionWidgetProps> = ({ onClick }) => {
         <Gift className="h-6 w-6" />
         <div className="text-center text-sm font-medium max-w-[120px]">
           <p>הטבה ייחודית</p>
-          <p className="font-bold text-yellow-200">5% חזרה</p>
+          <p className="font-bold text-yellow-200">50 ₪ חזרה</p>
           <p>על העבודה הראשונה</p>
         </div>
       </div>
