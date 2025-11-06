@@ -19,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentTitleIndex, setCurrentTitleIndex] = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(50); // Faster initial typing speed
-  const titles = ["לפלטפורמת מציאת אנשי השירות החדשנית של ישראל", "למערכת החדשנית למציאת נותן שירות - מעלים, משווים, מרוויחים"];
+  const titles = ["לפלטפורמת מציאת אנשי המקצוע החדשנית של ישראל", "למערכת החדשנית למציאת נותן שירות - מעלים, משווים, מרוויחים"];
   useEffect(() => {
     const currentTitle = titles[currentTitleIndex];
     const timer = setTimeout(() => {
