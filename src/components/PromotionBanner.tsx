@@ -81,6 +81,7 @@ const PromotionBanner: React.FC = () => {
           lastName,
           phone,
           email,
+          marketingConsent: isChecked,
           timestamp: new Date().toISOString(),
         }),
       });
