@@ -3,14 +3,16 @@ import { Gift, Check, Facebook, Instagram, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 const PromotionBanner: React.FC = () => {
   const [email, setEmail] = useState('');
-  const [fullName, setFullName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errors, setErrors] = useState<{
     email?: string;
     phone?: string;
-    fullName?: string;
+    firstName?: string;
+    lastName?: string;
   }>({});
   const {
     toast
@@ -24,19 +26,23 @@ const PromotionBanner: React.FC = () => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
   };
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Reset errors
     const newErrors: {
       email?: string;
       phone?: string;
-      fullName?: string;
+      firstName?: string;
+      lastName?: string;
     } = {};
 
     // Validate form fields
-    if (!fullName.trim()) {
-      newErrors.fullName = "נא להזין שם מלא";
+    if (!firstName.trim()) {
+      newErrors.firstName = "נא להזין שם פרטי";
+    }
+    if (!lastName.trim()) {
+      newErrors.lastName = "נא להזין שם משפחה";
     }
     if (!phone) {
       newErrors.phone = "נא להזין מספר טלפון";
@@ -63,19 +69,43 @@ const PromotionBanner: React.FC = () => {
       return;
     }
 
-    // No errors, proceed with submission
-    toast({
-      title: "תודה!",
-      description: "נשלח לך מייל כשהמערכת תהיה זמינה"
-    });
-    setIsSubmitted(true);
+    // Send data to webhook
+    try {
+      await fetch('https://hook.eu2.make.com/ndbpdupbfbcpyry0ts36jb13bk2gqq9y', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          phone,
+          email,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
+      toast({
+        title: "תודה רבה!",
+        description: "פרטיך נקלטו בהצלחה. נשלח לך עדכון מייל ברגע שהמערכת תעלה לאוויר ותוכל להנות מההטבה המיוחדת שלך!"
+      });
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error('Error sending to webhook:', error);
+      toast({
+        title: "תודה!",
+        description: "קיבלנו את פרטייך ונעדכן אותך בהקדם"
+      });
+      setIsSubmitted(true);
+    }
   };
   const resetForm = () => {
     setIsSubmitted(false);
-    setFullName('');
+    setFirstName('');
+    setLastName('');
     setPhone('');
     setEmail('');
-    setIsChecked(false);
+    setIsChecked(true);
     setErrors({});
   };
   return <div className="w-full bg-gradient-to-t from-blue-50/50 to-background py-0">
@@ -98,7 +128,9 @@ const PromotionBanner: React.FC = () => {
             
             {!isSubmitted ? <form onSubmit={handleSubmit} className="max-w-md mx-auto">
                 <div className="mb-4">
-                  <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} placeholder="שם מלא*" className={`w-full px-4 py-3 rounded-xl border ${errors.fullName ? 'border-red-500' : 'border-input'} bg-background focus:outline-none focus:ring-2 focus:ring-primary rtl mb-3`} required />
+                  <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="שם פרטי*" className={`w-full px-4 py-3 rounded-xl border ${errors.firstName ? 'border-red-500' : 'border-input'} bg-background focus:outline-none focus:ring-2 focus:ring-primary rtl mb-3`} required />
+                  
+                  <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} placeholder="שם משפחה*" className={`w-full px-4 py-3 rounded-xl border ${errors.lastName ? 'border-red-500' : 'border-input'} bg-background focus:outline-none focus:ring-2 focus:ring-primary rtl mb-3`} required />
                   
                   <input type="tel" value={phone} onChange={e => {
                 // Allow only digits
@@ -110,8 +142,8 @@ const PromotionBanner: React.FC = () => {
                 </div>
                 
                 <div className="flex items-start gap-2 mb-6 rtl">
-                  <input type="checkbox" id="terms" checked={isChecked} onChange={() => setIsChecked(!isChecked)} className="mt-1" />
-                  <label htmlFor="terms" className="text-sm text-muted-foreground">אני מעוניין/ת לקבל עדכונים על השקת המערכת קבלת ההטבה מבצעים שווים</label>
+                  <input type="checkbox" id="terms" checked={isChecked} onChange={() => setIsChecked(!isChecked)} className="mt-1" required />
+                  <label htmlFor="terms" className="text-sm text-muted-foreground">אני מעוניין/ת לקבל עדכונים על השקת המערכת, קבלת ההטבה ומבצעים שווים (חובה)*</label>
                 </div>
                 
                 <button type="submit" className="ofair-button w-full rtl">
@@ -129,8 +161,9 @@ const PromotionBanner: React.FC = () => {
                 <div className="inline-flex items-center justify-center bg-green-100 text-green-700 p-4 rounded-full mb-4">
                   <Check className="h-8 w-8" />
                 </div>
-                <h3 className="text-xl font-bold mb-2 rtl">נרשמת בהצלחה!</h3>
-                <p className="text-muted-foreground rtl mb-6">נעדכן אותך ברגע שהמערכת תהיה זמינה</p>
+                <h3 className="text-xl font-bold mb-2 rtl">תודה רבה על ההרשמה!</h3>
+                <p className="text-muted-foreground rtl mb-4">פרטייך נקלטו במערכת בהצלחה 🎉</p>
+                <p className="text-sm text-muted-foreground rtl mb-6">נשלח לך עדכון למייל ברגע שהמערכת תעלה לאוויר, ותוכל להנות מההטבה המיוחדת שלך - 50 שקל חזרה על העבודה הראשונה!</p>
                 
                 <div className="mt-4">
                   <p className="text-muted-foreground rtl font-medium mb-3">עקבו אחרינו ברשתות החברתיות:</p>
