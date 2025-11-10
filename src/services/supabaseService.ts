@@ -47,11 +47,12 @@ const normalizePhoneNumber = (phone: string): string => {
 
 export const getProfessionalByPhone = async (phone: string): Promise<Professional | null> => {
   try {
-    console.log("Fetching professional with phone:", phone);
+    console.log("=== getProfessionalByPhone START ===");
+    console.log("Input phone:", phone);
     
     // Normalize the input phone number
     const normalizedPhone = normalizePhoneNumber(phone);
-    console.log("Normalized phone:", normalizedPhone);
+    console.log("Normalized input phone:", normalizedPhone);
     
     // Get all professionals from the correct table using the actual column names
     const { data: allProfessionals, error } = await supabase
@@ -59,43 +60,50 @@ export const getProfessionalByPhone = async (phone: string): Promise<Professiona
       .select('name, company_name, phone_number');
     
     if (error) {
-      console.error('Error fetching professionals:', error);
+      console.error('Supabase error fetching professionals:', error);
       return null;
     }
     
     if (!allProfessionals || allProfessionals.length === 0) {
-      console.log('No professionals found in the database');
+      console.log('⚠️ No professionals found in the database (table is empty)');
       return null;
     }
     
-    console.log(`Found ${allProfessionals.length} professionals in the database`);
+    console.log(`✓ Found ${allProfessionals.length} professionals in database`);
+    console.log("All professionals:", allProfessionals.map(p => ({ name: p.name, phone: p.phone_number })));
     
     // Find a professional with a matching normalized phone number
     const matchedProfessional = allProfessionals.find(prof => {
       const normalizedProfPhone = prof.phone_number ? normalizePhoneNumber(prof.phone_number) : '';
-      console.log(`Comparing: ${normalizedProfPhone} with ${normalizedPhone}`);
-      return normalizedProfPhone === normalizedPhone;
+      const isMatch = normalizedProfPhone === normalizedPhone;
+      console.log(`  Comparing DB: "${normalizedProfPhone}" with Input: "${normalizedPhone}" => ${isMatch ? '✓ MATCH' : '✗'}`);
+      return isMatch;
     });
     
     if (matchedProfessional) {
-      console.log('Found matching professional:', matchedProfessional);
+      console.log('✓ Found matching professional:', matchedProfessional);
       // Convert to the expected Professional interface by splitting the name
       const nameParts = (matchedProfessional.name || '').split(' ');
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
       
-      return {
+      const result = {
         first_name: firstName,
         last_name: lastName,
         company_name: matchedProfessional.company_name,
         phone: matchedProfessional.phone_number || ''
       };
+      console.log("Returning professional:", result);
+      console.log("=== getProfessionalByPhone END (SUCCESS) ===");
+      return result;
     }
     
-    console.log('No matching professional found after normalization');
+    console.log('✗ No matching professional found after checking all records');
+    console.log("=== getProfessionalByPhone END (NOT FOUND) ===");
     return null;
   } catch (error) {
-    console.error('Failed to fetch professional:', error);
+    console.error('❌ Exception in getProfessionalByPhone:', error);
+    console.log("=== getProfessionalByPhone END (ERROR) ===");
     return null;
   }
 };
