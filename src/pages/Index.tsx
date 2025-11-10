@@ -12,6 +12,7 @@ import { useRatingManagement } from '@/hooks/useRatingManagement';
 const Index = () => {
   const {
     professional,
+    customerData,
     isLoading
   } = useProfessionalData();
   const {
@@ -47,7 +48,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           {isLoading ? <div className="flex justify-center items-center p-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-            </div> : <RatingSystem onRatingChange={handleRatingChange} professional={professional} />}
+            </div> : <RatingSystem onRatingChange={handleRatingChange} professional={professional} customerData={customerData} />}
         </div>
       </section>
       

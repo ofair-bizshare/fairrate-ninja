@@ -7,13 +7,15 @@ import CustomerDetails from './CustomerDetails';
 import ProfessionalDetails from './ProfessionalDetails';
 import CriteriaList from './CriteriaList';
 import FinalScore from './FinalScore';
+import { CustomerData } from '@/hooks/useProfessionalData';
 
 interface RatingSystemProps {
   onRatingChange: (ratings: { [key: string]: number }, weightedAverage: number, profName: string, recommendation?: string, customerName?: string, customerPhone?: string, profPhone?: string, companyName?: string) => void;
   professional?: Professional | null;
+  customerData?: CustomerData;
 }
 
-const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professional }) => {
+const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professional, customerData }) => {
   const [ratings, setRatings] = useState<{ [key: string]: number }>({
     overall: 0,
     timing: 0,
@@ -42,6 +44,16 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
       setCompanyName(professional.company_name || '');
     }
   }, [professional]);
+
+  // Update customer fields when customerData changes
+  useEffect(() => {
+    if (customerData?.customerName) {
+      setCustomerName(customerData.customerName);
+    }
+    if (customerData?.customerPhone) {
+      setCustomerPhone(customerData.customerPhone);
+    }
+  }, [customerData]);
 
   useEffect(() => {
     const totalWeight = ratingCriteria.reduce((sum, criterion) => sum + criterion.weight, 0);

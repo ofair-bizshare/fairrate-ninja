@@ -3,94 +3,124 @@ import { useLocation } from 'react-router-dom';
 import { getProfessionalByPhone, Professional } from '@/services/supabaseService';
 import { useToast } from '@/hooks/use-toast';
 
+export interface CustomerData {
+  customerName?: string;
+  customerPhone?: string;
+}
+
+export interface ProfessionalData {
+  professional: Professional | null;
+  customerData: CustomerData;
+}
+
 export const useProfessionalData = () => {
-  const [professional, setProfessional] = useState<Professional | null>(null);
+  const [professionalData, setProfessionalData] = useState<ProfessionalData>({
+    professional: null,
+    customerData: {}
+  });
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
   const { toast } = useToast();
 
   useEffect(() => {
-    const fetchProfessionalData = async () => {
-      // Don't fetch on the terms page
-      if (location.pathname === '/terms') {
-        return;
-      }
+    // Skip if we're on the terms page
+    if (location.pathname === '/terms') {
+      return;
+    }
+
+    const fetchProfessional = async () => {
+      const params = new URLSearchParams(location.search);
       
-      let phoneNumber = '';
+      // Extract all possible parameters from URL
+      const customerName = params.get('customer_name') || params.get('customerName');
+      const customerPhone = params.get('customer_phone') || params.get('customerPhone');
+      const profName = params.get('prof_name') || params.get('profName');
+      const profPhone = params.get('prof_phone') || params.get('profPhone');
+      const companyName = params.get('company_name') || params.get('companyName');
       
-      // Extract phone number from URL parameters
-      if (location.search) {
-        // Handle query parameters like ?phone=1234567890
-        const searchParams = new URLSearchParams(location.search);
-        phoneNumber = searchParams.get('phone') || searchParams.get('id') || '';
-        
-        // If no explicit param found, try to get the first parameter value
-        if (!phoneNumber) {
-          const firstParam = Array.from(searchParams.entries())[0];
-          if (firstParam) {
-            phoneNumber = firstParam[1];
-          }
+      // Try to get phone from query params first (for backward compatibility)
+      let phoneParam = params.get('phone') || params.get('tel');
+      
+      // If not in query params, try to extract from path
+      if (!phoneParam) {
+        const pathMatch = location.pathname.match(/\/(?:phone\/)?(\d{9,10})/);
+        if (pathMatch) {
+          phoneParam = pathMatch[1];
         }
       }
-      
-      // If not found in query params, try to get from pathname segments
-      if (!phoneNumber && location.pathname) {
-        const pathParts = location.pathname.split('/').filter(part => part);
-        if (pathParts.length > 0) {
-          // Try to find any segment that looks like a phone number (digits only or with + prefix)
-          for (const part of pathParts) {
-            if (/^\+?\d+$/.test(part)) {
-              phoneNumber = part;
-              break;
-            }
-          }
-          
-          // If no phone-like segment found, just try the last segment
-          if (!phoneNumber && pathParts.length > 0) {
-            phoneNumber = pathParts[pathParts.length - 1];
-          }
+
+      // If still no phone, try to find any 10-digit number in the URL
+      if (!phoneParam) {
+        const fullUrl = window.location.href;
+        const numberMatch = fullUrl.match(/(\d{10})/);
+        if (numberMatch) {
+          phoneParam = numberMatch[1];
         }
       }
-      
-      // Clean up the phone number - keep only digits and plus sign
-      phoneNumber = phoneNumber.replace(/[^\d+]/g, '');
-      
-      if (!phoneNumber) {
-        console.log("No phone number found in URL");
-        return;
-      }
-      
-      console.log("Extracted phone number:", phoneNumber);
-      setIsLoading(true);
-      
-      try {
-        const professionalData = await getProfessionalByPhone(phoneNumber);
-        console.log("Fetched professional data:", professionalData);
-        
-        if (professionalData) {
-          setProfessional(professionalData);
-        } else {
-          console.log("No professional found with phone number:", phoneNumber);
-          toast({
-            title: "לא נמצא נותן שירות",
-            description: "מספר הטלפון שהוזן לא נמצא במערכת",
-            variant: "destructive"
-          });
+
+      console.log("🔍 URL Analysis:", {
+        fullUrl: window.location.href,
+        pathname: location.pathname,
+        search: location.search,
+        extractedParams: {
+          phone: phoneParam,
+          customerName,
+          customerPhone,
+          profName,
+          profPhone,
+          companyName
         }
-      } catch (error) {
-        console.error("Error fetching professional data:", error);
-        toast({
-          title: "שגיאה בטעינת נתונים",
-          description: "אירעה שגיאה בעת טעינת נתוני נותן השירות",
-          variant: "destructive"
-        });
-      } finally {
-        setIsLoading(false);
+      });
+
+      let professional: Professional | null = null;
+
+      // If we have a phone parameter, try to fetch from database
+      if (phoneParam) {
+        console.log("📞 Found phone parameter, fetching from database:", phoneParam);
+        setIsLoading(true);
+        try {
+          const data = await getProfessionalByPhone(phoneParam);
+          if (data) {
+            console.log("✓ Professional data loaded from database:", data);
+            professional = data;
+          } else {
+            console.log("⚠️ No professional found in database for phone:", phoneParam);
+          }
+        } catch (error) {
+          console.error("❌ Error loading professional:", error);
+        } finally {
+          setIsLoading(false);
+        }
       }
+
+      // If we have manual parameters (profName, profPhone, companyName), use those
+      if (!professional && (profName || profPhone)) {
+        console.log("📝 Using manual professional parameters from URL");
+        const nameParts = (profName || '').split(' ');
+        professional = {
+          first_name: nameParts[0] || '',
+          last_name: nameParts.slice(1).join(' ') || '',
+          phone: profPhone || '',
+          company_name: companyName || undefined
+        };
+      }
+
+      // Set the professional data and customer data
+      setProfessionalData({
+        professional,
+        customerData: {
+          customerName: customerName || undefined,
+          customerPhone: customerPhone || undefined
+        }
+      });
     };
-    
-    fetchProfessionalData();
+
+    fetchProfessional();
   }, [location, toast]);
 
-  return { professional, isLoading };
+  return {
+    professional: professionalData.professional,
+    customerData: professionalData.customerData,
+    isLoading
+  };
 };
