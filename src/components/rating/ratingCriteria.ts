@@ -7,7 +7,6 @@ export interface RatingCriterion {
 }
 
 export const ratingCriteria: RatingCriterion[] = [
-  { id: 'overall', label: 'דירוג כולל', icon: '⭐', weight: 1.5 },
   { id: 'timing', label: 'עמידה בזמנים', icon: '⏳', weight: 1 },
   { id: 'quality', label: 'איכות העבודה', icon: '🏗️', weight: 1.5 },
   { id: 'value', label: 'מחיר מול תמורה', icon: '💰', weight: 1 },

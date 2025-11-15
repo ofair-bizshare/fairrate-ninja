@@ -15,7 +15,6 @@ export interface Rating {
   company_name?: string;
   customer_name: string;
   customer_phone: string;
-  rating_overall: number;
   rating_timing: number;
   rating_quality: number;
   rating_value: number;
