@@ -46,7 +46,6 @@ export const useRatingManagement = () => {
         company_name: companyName,
         customer_name: ratedCustomerName,
         customer_phone: ratedCustomerPhone,
-        rating_overall: newRatings.overall,
         rating_timing: newRatings.timing,
         rating_quality: newRatings.quality,
         rating_value: newRatings.value,
