@@ -31,12 +31,31 @@ export const useProfessionalData = () => {
     const fetchProfessional = async () => {
       const params = new URLSearchParams(location.search);
       
-      // Extract all possible parameters from URL
-      const customerName = params.get('customer_name') || params.get('customerName');
-      const customerPhone = params.get('customer_phone') || params.get('customerPhone');
-      const profName = params.get('prof_name') || params.get('profName');
-      const profPhone = params.get('prof_phone') || params.get('profPhone');
-      const companyName = params.get('company_name') || params.get('companyName');
+      // Extract all possible parameters from URL with proper decoding
+      const rawCustomerName = params.get('customer_name') || params.get('customerName');
+      const customerName = rawCustomerName 
+        ? decodeURIComponent(rawCustomerName).replace(/_/g, ' ')
+        : undefined;
+      
+      const rawCustomerPhone = params.get('customer_phone') || params.get('customerPhone');
+      const customerPhone = rawCustomerPhone 
+        ? decodeURIComponent(rawCustomerPhone)
+        : undefined;
+      
+      const rawProfName = params.get('prof_name') || params.get('profName');
+      const profName = rawProfName 
+        ? decodeURIComponent(rawProfName).replace(/_/g, ' ')
+        : undefined;
+      
+      const rawProfPhone = params.get('prof_phone') || params.get('profPhone');
+      const profPhone = rawProfPhone 
+        ? decodeURIComponent(rawProfPhone)
+        : undefined;
+      
+      const rawCompanyName = params.get('company_name') || params.get('companyName');
+      const companyName = rawCompanyName 
+        ? decodeURIComponent(rawCompanyName).replace(/_/g, ' ')
+        : undefined;
       
       // Try to get phone from query params first (for backward compatibility)
       let phoneParam = params.get('phone') || params.get('tel');

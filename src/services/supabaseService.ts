@@ -48,52 +48,32 @@ export const getProfessionalByPhone = async (phone: string): Promise<Professiona
     console.log("=== getProfessionalByPhone START ===");
     console.log("Input phone:", phone);
     
-    // Normalize the input phone number
-    const normalizedPhone = normalizePhoneNumber(phone);
-    console.log("Normalized input phone:", normalizedPhone);
-    
-    // Get all professionals from the correct table using the actual column names
-    const { data: allProfessionals, error } = await supabase
-      .from('professionals')
-      .select('name, company_name, phone_number');
-    
-    if (error) {
-      console.error('Supabase error fetching professionals:', error);
-      return null;
-    }
-    
-    if (!allProfessionals || allProfessionals.length === 0) {
-      console.log('⚠️ No professionals found in the database (table is empty)');
-      return null;
-    }
-    
-    console.log(`✓ Found ${allProfessionals.length} professionals in database`);
-    console.log("All professionals:", allProfessionals.map(p => ({ name: p.name, phone: p.phone_number })));
-    
-    // Find a professional with a matching normalized phone number
-    const matchedProfessional = allProfessionals.find(prof => {
-      const normalizedProfPhone = prof.phone_number ? normalizePhoneNumber(prof.phone_number) : '';
-      const isMatch = normalizedProfPhone === normalizedPhone;
-      console.log(`  Comparing DB: "${normalizedProfPhone}" with Input: "${normalizedPhone}" => ${isMatch ? '✓ MATCH' : '✗'}`);
-      return isMatch;
+    // Call edge function instead of direct DB query (bypasses RLS securely)
+    const { data, error } = await supabase.functions.invoke('get-professional-by-phone', {
+      body: { phone }
     });
     
-    if (matchedProfessional) {
-      console.log('✓ Found matching professional:', matchedProfessional);
-      
-      const result = {
-        name: matchedProfessional.name || '',
-        company_name: matchedProfessional.company_name,
-        phone: matchedProfessional.phone_number || ''
-      };
-      console.log("Returning professional:", result);
-      console.log("=== getProfessionalByPhone END (SUCCESS) ===");
-      return result;
+    if (error) {
+      console.error('Edge function error:', error);
+      console.log("=== getProfessionalByPhone END (ERROR) ===");
+      return null;
     }
     
-    console.log('✗ No matching professional found after checking all records');
-    console.log("=== getProfessionalByPhone END (NOT FOUND) ===");
-    return null;
+    if (!data || data.error) {
+      console.log('Professional not found:', data?.error || 'No data returned');
+      console.log("=== getProfessionalByPhone END (NOT FOUND) ===");
+      return null;
+    }
+    
+    console.log('✓ Found professional:', data);
+    console.log("=== getProfessionalByPhone END (SUCCESS) ===");
+    
+    return {
+      name: data.name || '',
+      company_name: data.company_name,
+      phone: data.phone || ''
+    };
+    
   } catch (error) {
     console.error('❌ Exception in getProfessionalByPhone:', error);
     console.log("=== getProfessionalByPhone END (ERROR) ===");

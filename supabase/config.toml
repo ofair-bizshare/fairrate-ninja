@@ -1,1 +1,4 @@
 project_id = "erlfsougrkzbgonumhoa"
+
+[functions.get-professional-by-phone]
+verify_jwt = false
