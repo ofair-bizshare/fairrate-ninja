@@ -39,6 +39,23 @@ export const useRatingManagement = () => {
     }
     
     // Save the rating to Supabase
+    if (!profPhone) {
+      console.error('❌ Cannot save rating - missing professional phone:', {
+        profName: ratedProfName,
+        profPhone,
+        customerName: ratedCustomerName,
+        customerPhone: ratedCustomerPhone,
+        average
+      });
+      toast({
+        title: "שגיאה בשמירת הדירוג",
+        description: "חסר מספר טלפון של נותן השירות. וודאו שהגעתם מהקישור הנכון.",
+        variant: "destructive",
+      });
+      setShowSubmitSuccess(true);
+      return;
+    }
+
     if (profPhone && ratedCustomerName && ratedCustomerPhone) {
       const ratingData: Rating = {
         professional_name: ratedProfName,
@@ -56,9 +73,16 @@ export const useRatingManagement = () => {
         recommendation: ratedRecommendation
       };
       
+      console.log('💾 Preparing to save rating:', {
+        professional: ratingData.professional_name,
+        phone: ratingData.professional_phone,
+        customer: ratingData.customer_name,
+        average: ratingData.weighted_average
+      });
+      
       try {
         const ratingId = await saveRating(ratingData);
-        console.log('Rating saved with ID:', ratingId);
+        console.log('✅ Rating saved with ID:', ratingId);
         
         // Send webhook to Make
         if (ratingId) {

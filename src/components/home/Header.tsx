@@ -60,13 +60,11 @@ const Header: React.FC<HeaderProps> = ({
           </div>
           
           <h1 className="text-2xl md:text-3xl lg:text-4xl mb-6 max-w-4xl mx-auto leading-tight font-extrabold">
-            {professional ? `דרגו את ${professional.first_name} ${professional.last_name} ${professional.company_name ? `מחברת ${professional.company_name}` : ''}` : <>
-                  דרגו את נותן השירות שלכם ועזרו לו להכנס{" "}
-                  <span className={cn("transition-all duration-500 inline-block min-h-[40px]", currentTitleIndex === 1 ? "text-[#70EACD] font-extrabold" : "")}>
-                    {displayText}
-                    <span className="animate-pulse">|</span>
-                  </span>
-                </>}
+            דרגו את נותן השירות שלכם ועזרו לו להכנס{" "}
+            <span className={cn("transition-all duration-500 inline-block min-h-[40px]", currentTitleIndex === 1 ? "text-[#70EACD] font-extrabold" : "")}>
+              {displayText}
+              <span className="animate-pulse">|</span>
+            </span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             בעזרת הדירוגים שלכם, אנחנו יוצרים קהילה של נותני שירות אמינים ומדויקים יותר.
