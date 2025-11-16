@@ -57,23 +57,14 @@ export const useProfessionalData = () => {
         ? decodeURIComponent(rawCompanyName).replace(/_/g, ' ')
         : undefined;
       
-      // Try to get phone from query params first (for backward compatibility)
-      let phoneParam = params.get('phone') || params.get('tel');
+      // Priority order for professional phone: prof_phone/profPhone -> phone/tel
+      let phoneParam = profPhone || params.get('phone') || params.get('tel');
       
       // If not in query params, try to extract from path
       if (!phoneParam) {
         const pathMatch = location.pathname.match(/\/(?:phone\/)?(\d{9,10})/);
         if (pathMatch) {
           phoneParam = pathMatch[1];
-        }
-      }
-
-      // If still no phone, try to find any 10-digit number in the URL
-      if (!phoneParam) {
-        const fullUrl = window.location.href;
-        const numberMatch = fullUrl.match(/(\d{10})/);
-        if (numberMatch) {
-          phoneParam = numberMatch[1];
         }
       }
 
@@ -88,8 +79,15 @@ export const useProfessionalData = () => {
           profName,
           profPhone,
           companyName
-        }
+        },
+        phoneSource: profPhone ? 'profPhone parameter' : phoneParam ? 'phone/tel parameter or path' : 'none'
       });
+
+      if (!phoneParam) {
+        console.warn("⚠️ No professional phone found - ratings will not be saved");
+      } else {
+        console.log(`📞 Using professional phone from: ${profPhone ? 'profPhone' : 'phone/tel/path'}`);
+      }
 
       let professional: Professional | null = null;
 
