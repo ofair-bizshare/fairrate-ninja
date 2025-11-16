@@ -2,3 +2,6 @@ project_id = "erlfsougrkzbgonumhoa"
 
 [functions.get-professional-by-phone]
 verify_jwt = false
+
+[functions.save-rating]
+verify_jwt = false

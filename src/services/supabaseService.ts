@@ -83,21 +83,28 @@ export const getProfessionalByPhone = async (phone: string): Promise<Professiona
 
 export const saveRating = async (rating: Rating): Promise<string | null> => {
   try {
-    const { data, error } = await supabase
-      .from('professional_ratings')
-      .insert(rating)
-      .select('id')
-      .single();
+    console.log('💾 Saving rating via Edge Function:', rating);
+    
+    // Call edge function instead of direct DB insert
+    const { data, error } = await supabase.functions.invoke('save-rating', {
+      body: rating
+    });
     
     if (error) {
-      console.error('Error saving rating:', error);
+      console.error('❌ Edge function error:', error);
       return null;
     }
     
-    console.log('Rating saved successfully with ID:', data.id);
+    if (!data || data.error) {
+      console.error('❌ Failed to save rating:', data?.error);
+      return null;
+    }
+    
+    console.log('✅ Rating saved successfully with ID:', data.id);
     return data.id;
+    
   } catch (error) {
-    console.error('Failed to save rating:', error);
+    console.error('❌ Exception in saveRating:', error);
     return null;
   }
 };
