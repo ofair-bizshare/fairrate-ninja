@@ -38,8 +38,7 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
   // Update the fields when professional data changes
   useEffect(() => {
     if (professional) {
-      const fullName = `${professional.first_name || ''} ${professional.last_name || ''}`.trim();
-      setProfName(fullName);
+      setProfName(professional.name || '');
       setProfPhone(professional.phone || '');
       setCompanyName(professional.company_name || '');
     }

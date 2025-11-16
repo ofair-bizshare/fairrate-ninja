@@ -2,8 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 
 export interface Professional {
-  first_name: string;
-  last_name: string;
+  name: string;
   company_name?: string;
   phone: string;
 }
@@ -81,14 +80,9 @@ export const getProfessionalByPhone = async (phone: string): Promise<Professiona
     
     if (matchedProfessional) {
       console.log('✓ Found matching professional:', matchedProfessional);
-      // Convert to the expected Professional interface by splitting the name
-      const nameParts = (matchedProfessional.name || '').split(' ');
-      const firstName = nameParts[0] || '';
-      const lastName = nameParts.slice(1).join(' ') || '';
       
       const result = {
-        first_name: firstName,
-        last_name: lastName,
+        name: matchedProfessional.name || '',
         company_name: matchedProfessional.company_name,
         phone: matchedProfessional.phone_number || ''
       };

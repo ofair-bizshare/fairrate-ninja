@@ -96,10 +96,8 @@ export const useProfessionalData = () => {
       // If we have manual parameters (profName, profPhone, companyName), use those
       if (!professional && (profName || profPhone)) {
         console.log("📝 Using manual professional parameters from URL");
-        const nameParts = (profName || '').split(' ');
         professional = {
-          first_name: nameParts[0] || '',
-          last_name: nameParts.slice(1).join(' ') || '',
+          name: profName || '',
           phone: profPhone || '',
           company_name: companyName || undefined
         };
