@@ -20,9 +20,13 @@ const FinalScore: React.FC<FinalScoreProps> = ({ weightedAverage }) => {
           <Star className="h-8 w-8 text-yellow-400" />
         </div>
         
-        {isExcellent && (
+        {isExcellent ? (
           <div className="text-sm text-green-600 rtl text-center max-w-xs mx-auto mt-2 font-medium">
             מעולה! בofair תמצאו רק נותני שירות שקיבלו 4.2 או יותר!
+          </div>
+        ) : (
+          <div className="text-sm text-primary rtl text-center max-w-md mx-auto mt-2 font-medium leading-relaxed">
+            בofair נמצאים רק בעלי המקצוע האיכותיים ביותר עם ציון מינימלי של 4.2 מתוך 5.
           </div>
         )}
         
