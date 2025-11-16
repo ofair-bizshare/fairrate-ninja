@@ -59,6 +59,57 @@ export const useRatingManagement = () => {
       try {
         const ratingId = await saveRating(ratingData);
         console.log('Rating saved with ID:', ratingId);
+        
+        // Send webhook to Make
+        if (ratingId) {
+          try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const webhookData = {
+              // Professional details
+              professional_name: ratedProfName,
+              professional_phone: profPhone,
+              company_name: companyName || '',
+              
+              // Customer details
+              customer_name: ratedCustomerName,
+              customer_phone: ratedCustomerPhone,
+              
+              // Ratings
+              rating_timing: newRatings.timing,
+              rating_quality: newRatings.quality,
+              rating_value: newRatings.value,
+              rating_communication: newRatings.communication,
+              rating_cleanliness: newRatings.cleanliness,
+              rating_recommendation: newRatings.recommendation,
+              weighted_average: average,
+              recommendation: ratedRecommendation || '',
+              
+              // UTM Parameters
+              utm_source: urlParams.get('utm_source') || '',
+              utm_medium: urlParams.get('utm_medium') || '',
+              utm_campaign: urlParams.get('utm_campaign') || '',
+              utm_term: urlParams.get('utm_term') || '',
+              utm_content: urlParams.get('utm_content') || '',
+              
+              // Metadata
+              rating_id: ratingId,
+              timestamp: new Date().toISOString(),
+              is_excellent: average >= 4.2
+            };
+
+            await fetch('https://hook.eu2.make.com/unpyqi8ifr2zz39un65da67q06tfxbl2', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(webhookData)
+            });
+            
+            console.log('✅ Webhook sent successfully to Make');
+          } catch (webhookError) {
+            console.error('⚠️ Webhook failed (non-critical):', webhookError);
+          }
+        }
       } catch (error) {
         console.error('Error saving rating:', error);
       }
