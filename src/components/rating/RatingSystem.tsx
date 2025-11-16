@@ -37,7 +37,9 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
 
   // Update the fields when professional data changes
   useEffect(() => {
+    console.log('🔧 RatingSystem received professional:', professional);
     if (professional) {
+      console.log('📱 Setting professional phone to:', professional.phone);
       setProfName(professional.name || '');
       setProfPhone(professional.phone || '');
       setCompanyName(professional.company_name || '');

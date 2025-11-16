@@ -117,8 +117,17 @@ export const useProfessionalData = () => {
         console.log("📝 Using manual professional parameters from URL");
         professional = {
           name: profName || '',
-          phone: profPhone || '',
+          phone: profPhone || phoneParam || '',
           company_name: companyName || undefined
+        };
+      }
+      
+      // If professional exists but phone is empty, add fallback
+      if (professional && !professional.phone) {
+        console.log("🔄 Professional exists but phone is empty, using fallback:", profPhone || phoneParam);
+        professional = {
+          ...professional,
+          phone: profPhone || phoneParam || ''
         };
       }
 
