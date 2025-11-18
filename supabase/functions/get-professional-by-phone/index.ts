@@ -45,11 +45,11 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Get all active/approved professionals
+    // Get all active/approved/pending professionals
     const { data: professionals, error } = await supabase
       .from('professionals')
       .select('name, company_name, phone_number, status')
-      .in('status', ['approved', 'active']);
+      .in('status', ['approved', 'active', 'pending']);
 
     if (error) {
       console.error('❌ Database error:', error);
