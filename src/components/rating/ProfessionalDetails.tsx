@@ -8,6 +8,7 @@ interface ProfessionalDetailsProps {
   profPhone: string;
   companyName: string;
   onProfNameChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onProfPhoneChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   professional: Professional | null | undefined;
   errors: { [key: string]: boolean };
 }
@@ -17,6 +18,7 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
   profPhone,
   companyName,
   onProfNameChange,
+  onProfPhoneChange,
   professional,
   errors
 }) => {
@@ -51,11 +53,17 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
           type="tel"
           id="profPhone"
           value={profPhone}
-          readOnly
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-gray-100 rtl"
-          placeholder="מספר טלפון"
+          onChange={onProfPhoneChange}
+          className={cn(
+            "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary rtl",
+            errors.profPhone ? "border-red-500 bg-red-50" : "border-gray-300"
+          )}
+          placeholder="הזינו מספר טלפון"
           required
         />
+        {errors.profPhone && (
+          <p className="text-red-500 text-sm mt-1 rtl">נא להזין מספר טלפון</p>
+        )}
       </div>
 
       {(companyName || professional) && (
