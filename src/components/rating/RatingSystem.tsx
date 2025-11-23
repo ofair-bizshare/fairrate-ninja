@@ -91,6 +91,16 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
     }
   };
 
+  const handleProfPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setProfPhone(e.target.value);
+    if (e.target.value.trim() && errors.profPhone) {
+      setErrors(prev => ({
+        ...prev,
+        profPhone: false
+      }));
+    }
+  };
+
   const handleCustomerNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCustomerName(e.target.value);
     if (e.target.value.trim() && errors.customerName) {
@@ -146,6 +156,10 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
 
     if (!profName.trim()) {
       newErrors.profName = true;
+    }
+
+    if (!profPhone.trim()) {
+      newErrors.profPhone = true;
     }
 
     let hasRating = false;
@@ -207,6 +221,7 @@ const RatingSystem: React.FC<RatingSystemProps> = ({ onRatingChange, professiona
         profPhone={profPhone}
         companyName={companyName}
         onProfNameChange={handleProfNameChange}
+        onProfPhoneChange={handleProfPhoneChange}
         professional={professional}
         errors={errors}
       />
